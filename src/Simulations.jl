@@ -74,7 +74,7 @@ mutable struct Simulation
 end
 
 function show(io::IO, sim::Simulation)
-    println(io, "Simulation($(sim.name) --> $(status[sim.status]))")
+    print(io, "Simulation($(sim.name) --> $(status[sim.status]))")
 end
 
 mutable struct Sampling
@@ -93,7 +93,7 @@ mutable struct Sampling
 end
 
 function show(io::IO, samp::Sampling)
-    println(io, "Sampling($(length(samp.simulations)) simulations)")
+    print(io, "Sampling($(length(samp.simulations)) simulations)")
 end
 
 function filter_simulations(samp::Sampling, st::Int)
