@@ -46,7 +46,20 @@ mutable struct Simulation
 
     function Simulation(name::String)
         status = check_status(name)
-        return new(status, name, 0.0, 0.0, (0.0,0.0,0.0), true, (0.0,0.0,0.0), 0, (0.0,0.0,0.0), 0)
+        α = 0.0
+        β = 0.0
+        eps_fin = (0.0,0.0,0.0)
+        plot_status = true
+        linear_max = (0.0,0.0,0.0)
+        lin_status = 0
+        nonlinear_max = (0.0,0.0,0.0)
+        fail_status = 0
+
+        if status == 5
+            linear_max = JSON.parsefile("simulations/$(name)/linear_stresses.dat")
+            nonlinear_max = JSON.parsefile("simulations/$(name)/nonlinear_stresses.dat")
+        end
+        return new(status, name, α, β, eps_fin, plot_status, linear_max, lin_status, nonlinear_max, fail_status)
     end
 end
 
