@@ -32,9 +32,12 @@ mutable struct Sampling
 
     function Sampling(path::AbstractString)
         simulations = Dict{String,Simulation}()
+        cd(path)
+        sampling_path = pwd()
         for f in readdir("simulations")
             simulations[f] = Simulation(f)
         end
+        return new(new(simulations, sampling_path))
     end
 end
 
