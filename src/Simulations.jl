@@ -7,6 +7,8 @@ using JSON
 using Optim
 using Statistics
 
+import Base.show
+
 include("Simulations_lists.jl")
 
 mutable struct Simulation
@@ -26,6 +28,10 @@ mutable struct Simulation
     end
 end
 
+function show(io::IO, sim::Simulation)
+    println(io, "Simulation($(name) --> $(status[sim.status]))")
+end
+
 mutable struct Sampling
     simulations::Dict{String,Simulation}
     path::AbstractString
@@ -39,6 +45,10 @@ mutable struct Sampling
         end
         return new(simulations, sampling_path)
     end
+end
+
+function show(io::IO, samp::Sampling)
+    println(io, "Sampling($(length(samp.simulations)) simulations")
 end
 
 end # module
