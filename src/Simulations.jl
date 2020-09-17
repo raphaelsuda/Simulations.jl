@@ -37,7 +37,7 @@ mutable struct Sampling
         for f in readdir("simulations")
             simulations[f] = Simulation(f)
         end
-        return new(new(simulations, sampling_path))
+        return new(simulations, sampling_path)
     end
 end
 
