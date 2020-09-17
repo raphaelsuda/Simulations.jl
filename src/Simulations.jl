@@ -8,6 +8,8 @@ using Optim
 using Statistics
 
 import Base.show
+export Sampling,
+       filter_simulations
 
 include("Simulations_lists.jl")
 
@@ -103,7 +105,7 @@ function filter_simulations(samp::Sampling, st::Int)
             end
         end
     else
-        @warning "Unknown status code passed"
+        @warn "Unknown status code passed"
     end
     return simulations
 end
