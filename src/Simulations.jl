@@ -11,6 +11,27 @@ import Base.show
 
 include("Simulations_lists.jl")
 
+function check_status(sim_name::String)
+    files = readdir("simulations/$(sim_name)")
+    if isempty(files)
+        return 0
+    elseif ("$(sim_name).inp" in files) && ("model_data.dat" in files)
+        if "stresses_done" in files
+            return 5
+        elseif "rf_done" in files
+            return 4
+        elseif ("$(sim_name).lck" in files)
+            return 2
+        elseif ("$(sim_name).sta" in files)
+            return 3
+        else
+            return 1
+        end
+    else
+        return 99
+    end
+end
+
 mutable struct Simulation
     status::Int
     name::String
@@ -24,7 +45,8 @@ mutable struct Simulation
     fail_status::Int
 
     function Simulation(name::String)
-        return new(0, name, 0.0, 0.0, (0.0,0.0,0.0), true, (0.0,0.0,0.0), 0, (0.0,0.0,0.0), 0)
+        status = check_status(name)
+        return new(status, name, 0.0, 0.0, (0.0,0.0,0.0), true, (0.0,0.0,0.0), 0, (0.0,0.0,0.0), 0)
     end
 end
 
