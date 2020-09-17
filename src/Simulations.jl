@@ -55,6 +55,14 @@ mutable struct Simulation
         nonlinear_max = (0.0,0.0,0.0)
         fail_status = 0
 
+        if 1 <= status <= 5
+            model_data = JSON.parsefile("simulations/$(name)/model_data.dat")
+            α = model_data["α"]
+            β = model_data["β"]
+            eps_fin = Tuple(model_data["eps_fin"])
+            plot_status = model_data["plot_status"]
+        end
+
         if status == 5
             linear_max = Tuple(JSON.parsefile("simulations/$(name)/linear_stresses.dat"))
             nonlinear_max = Tuple(JSON.parsefile("simulations/$(name)/nonlinear_stresses.dat"))
