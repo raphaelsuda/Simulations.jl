@@ -94,4 +94,35 @@ function show(io::IO, samp::Sampling)
     println(io, "Sampling($(length(samp.simulations)) simulations)")
 end
 
+function filter_simulations(samp::Sampling, st::Int)
+    simulations = Dict{String,Simulation}()
+    if st in keys(status)
+        for s in values(samp.simulations)
+            if s.status == st
+                simulations[s.name] = s
+            end
+        end
+    else
+        @warning "Unknown status code passed"
+    end
+    return simulations
+end
+    
+function filter_simulations(samp::Sampling, st::String)
+    simulations = Dict{String,Simulation}()
+    if st in values(status)
+        for s in values(samp.simulations)
+            if status[s.status] == st
+                simulations[s.name] = s
+            end
+        end
+    else
+        @warning "Unknown status code passed"
+    end
+    return simulations
+end
+
+    
+
+
 end # module
