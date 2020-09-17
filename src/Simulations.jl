@@ -117,7 +117,7 @@ function filter_simulations(samp::Sampling, st::String)
             end
         end
     else
-        @warning "Unknown status code passed"
+        @warn "Unknown status code passed"
     end
     return simulations
 end
