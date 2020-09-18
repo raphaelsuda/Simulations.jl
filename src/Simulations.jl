@@ -52,7 +52,7 @@ mutable struct Simulation
         α = 0.0
         β = 0.0
         eps_fin = (0.0,0.0,0.0)
-        plot_status = true
+        plot_status = false
         linear_max = (0.0,0.0,0.0)
         lin_status = 0
         nonlinear_max = (0.0,0.0,0.0)
