@@ -106,6 +106,45 @@ function initiate_sampling(path::AbstractString)
     return nothing
 end
 
+function filter_simulations(simulations::Dict{String,Simulation}, st::Int)
+    filtered_simulations = Dict{String,Simulation}()
+    if st in keys(status)
+        for s in values(simulations)
+            if s.status == st
+                filtered_simulations[s.name] = s
+            end
+        end
+    else
+        @warn "Unknown status code passed"
+    end
+    return filtered_simulations
+end
+
+function filter_simulations(simulations::Dict{String,Simulation}, st::String)
+    filtered_simulations = Dict{String,Simulation}()
+    if st in values(status)
+        for s in values(simulations)
+            if status[s.status] == st
+                filtered_simulations[s.name] = s
+            end
+        end
+    else
+        @warn "Unknown status code passed"
+    end
+    return filtered_simulations
+end
+
+function filter_simulations(simulations::Dict{String,Simulation}, plot_st::Bool)
+    filtered_simulations = Dict{String,Simulation}()
+    for s in values(simulations)
+        if s.plot_status == plot_st
+            filtered_simulations[s.name] = s
+        end
+    end
+    return filtered_simulations
+end
+    
+
 function filter_simulations(samp::Sampling, st::Int)
     simulations = Dict{String,Simulation}()
     if st in keys(status)
@@ -119,7 +158,7 @@ function filter_simulations(samp::Sampling, st::Int)
     end
     return simulations
 end
-    
+
 function filter_simulations(samp::Sampling, st::String)
     simulations = Dict{String,Simulation}()
     if st in values(status)
@@ -134,6 +173,16 @@ function filter_simulations(samp::Sampling, st::String)
     return simulations
 end
 
+function filter_simulations(samp::Sampling, plot_st::Bool)
+    simulations = Dict{String,Simulation}()
+    for s in values(samp.simulations)
+        if s.plot_status == plot_st
+            simulations[s.name] = s
+        end
+    end
+    return simulations
+end
+    
 function create_job(sim::Simulation, n_cpus::Int64)
     job_lines = ["#!/bin/bash",
                  "#\$ -cwd",
@@ -156,7 +205,35 @@ function create_job(sim::Simulation, n_cpus::Int64)
     return nothing
 end
 
-    
-
+function collect_failure_data(samp::Sampling)
+    plot_simulations = filter_simulations(samp,true)
+    sim_names = String[]
+    sig_xx_lin = Float64[]
+    sig_zz_lin = Float64[]
+    sig_xz_lin = Float64[]
+    sig_xx_nonlin = Float64[]
+    sig_zz_nonlin = Float64[]
+    sig_xz_nonlin = Float64[]
+    for s in plot_simulations
+        push!(sim_names,s.name)
+        lin_max = s.lin_max
+        nonlin_max = s.nonlin_max
+        push!(sig_xx_lin,lin_max[1])
+        push!(sig_zz_lin,lin_max[2])
+        push!(sig_xz_lin,lin_max[3])
+        push!(sig_xx_nonlin,nonlin_max[1])
+        push!(sig_zz_nonlin,nonlin_max[2])
+        push!(sig_xz_nonlin,nonlin_max[3])
+    end
+    plot_df = DataFrame(:simulation => sim_names,
+                     :sig_xx_lin => sig_xx_lin,
+                     :sig_zz_lin => sig_zz_lin,
+                     :sig_xz_lin => sig_xz_lin,
+                     :sig_xx_nonlin => sig_xx_nonlin,
+                     :sig_zz_nonlin => sig_zz_nonlin,
+                     :sig_xz_nonlin => sig_xz_nonlin)
+    CSV.write("plot_failure_data.dat")
+    return plot_df
+end
 
 end # module
