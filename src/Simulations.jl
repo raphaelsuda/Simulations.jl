@@ -133,6 +133,26 @@ function filter_simulations(samp::Sampling, st::String)
     return simulations
 end
 
+function create_job(sim::Simulation, n_cpus::Int64)
+    job_lines = ["\#!/bin/bash",
+                 "\#\$ -cwd",
+                 "\#\$ -N $(sim.name)",
+                 "\#\$ -V",
+                 "\#\$ -pe openmpi_fill $(n_cpus)",
+                 "\#\$ -q nodes.q",
+                 "\#\$ -l h_rt=48:00:00",
+                 "\#\$ -M raphael.suda@tuwien.ac.at",
+                 "\#\$ -m beas",
+                 "",
+                 "echo `date`",
+                 "echo \"running job $JOB_ID on $HOSTNAME\"",
+                 "abq2019 job=$(sim.name) scratch=\"/scratch/tmp\" cpus=$(n_cpus) mp_mode=threads input=$(sim.name).inp interactive"]
+    open("simulations/$(sim.name)/job.sh","w") do job
+        println(job,job_lines[i]) for i in 1:length(job_lines)
+    end
+    return nothing
+end
+
     
 
 
