@@ -74,6 +74,21 @@ mutable struct Simulation
     end
 end
 
+function set_plot_status(samp::Sampling, sim_name::String, plot_st::Bool)
+    if sim_name in keys(samp.simulations)
+        samp.simulations[sim_name].plot_status = plot_st
+        return plot_st
+    end
+    @warn "Simulation $(sim_name) not found in given Sampling."
+end
+
+function set_plot_status(samp::Sampling, sim_names::Array{String,1}, plot_st::Bool)
+    for s in sim_names
+        set_plot_status(samp, s, plot_st)
+    end
+    return plot_st
+end
+
 function show(io::IO, sim::Simulation)
     print(io, "Simulation($(sim.name) --> $(status[sim.status]))")
 end
