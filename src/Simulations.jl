@@ -9,6 +9,7 @@ using Statistics
 
 import Base.show
 export Sampling,
+       initiate_sampling,
        filter_simulations
 
 include("Simulations_lists.jl")
