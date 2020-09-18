@@ -6,6 +6,7 @@ using DelimitedFiles
 using JSON
 using Optim
 using Statistics
+using Plots
 
 import Base.show
 export Sampling,
@@ -264,5 +265,7 @@ function collect_failure_data(samp::Sampling)
     CSV.write("plot_failure_data.dat", plot_df)
     return plot_df
 end
+
+include("Simulations_plotting.jl")
 
 end # module
