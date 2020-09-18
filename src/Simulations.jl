@@ -96,6 +96,15 @@ function show(io::IO, samp::Sampling)
     print(io, "Sampling($(length(samp.simulations)) simulations)")
 end
 
+function initiate_sampling(path::AbstractString)
+    cd(path)
+    @info "Initiating sampling project in $(pwd())"
+    for f in folder_structure
+        isdir(f) ? nothing : mkdir(f)
+    end
+    return nothing
+end
+
 function filter_simulations(samp::Sampling, st::Int)
     simulations = Dict{String,Simulation}()
     if st in keys(status)

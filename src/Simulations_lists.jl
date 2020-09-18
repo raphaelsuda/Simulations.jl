@@ -14,3 +14,8 @@ const fail_status = Dict(   0 => "not evaluated",
                             1 => "no significant decrease",
                             2 => "significant decrease",
                             3 => "increase after decrease")
+
+const folder_structure = ["figures",
+                          "model_data",
+                          "simulations",
+                          "templates"]
