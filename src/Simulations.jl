@@ -214,7 +214,7 @@ function collect_failure_data(samp::Sampling)
     sig_xx_nonlin = Float64[]
     sig_zz_nonlin = Float64[]
     sig_xz_nonlin = Float64[]
-    for s in plot_simulations
+    for s in values(plot_simulations)
         push!(sim_names,s.name)
         lin_max = s.lin_max
         nonlin_max = s.nonlin_max
