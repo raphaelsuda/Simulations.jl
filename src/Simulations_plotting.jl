@@ -15,5 +15,5 @@ function scatter_sampling(samp::Sampling; show_text=true, show_linear=true)
 	else
 		scatter!(p, plot_simulations_data[!,:sig_xx_nonlin], plot_simulations_data[!,:sig_zz_nonlin], zcolor=plot_simulations_data[!,:sig_xz_nonlin])
     end
-    return nothing
+    return p
 end
