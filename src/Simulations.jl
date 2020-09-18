@@ -113,11 +113,7 @@ end
 function set_plot_status(samp::Sampling, sim_name::String, plot_st::Bool)
     if sim_name in keys(samp.simulations)
         samp.simulations[sim_name].plot_status = plot_st
-        model_data = JSON.parsefile("simulations/$(sim_name)/model_data.dat")
-        model_data["plot_status"] = plot_st
-        open("simulations/$(sim_name)/model_data.dat","w") do md
-            JSON.print(md,model_data)
-        end
+        write_model_data(samp.simulations[sim_name])
         return plot_st
     end
     @warn "Simulation $(sim_name) not found in given Sampling."
