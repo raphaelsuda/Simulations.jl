@@ -74,6 +74,30 @@ mutable struct Simulation
     end
 end
 
+
+function show(io::IO, sim::Simulation)
+    print(io, "Simulation($(sim.name) --> $(status[sim.status]))")
+end
+
+mutable struct Sampling
+    simulations::Dict{String,Simulation}
+    path::AbstractString
+    
+    function Sampling(path::AbstractString)
+        simulations = Dict{String,Simulation}()
+        cd(path)
+        sampling_path = pwd()
+        for f in readdir("simulations")
+            simulations[f] = Simulation(f)
+        end
+        return new(simulations, sampling_path)
+    end
+end
+
+function show(io::IO, samp::Sampling)
+    print(io, "Sampling($(length(samp.simulations)) simulations)")
+end
+
 function set_plot_status(samp::Sampling, sim_name::String, plot_st::Bool)
     if sim_name in keys(samp.simulations)
         samp.simulations[sim_name].plot_status = plot_st
@@ -92,29 +116,6 @@ function set_plot_status(samp::Sampling, sim_names::Array{String,1}, plot_st::Bo
         set_plot_status(samp, s, plot_st)
     end
     return plot_st
-end
-
-function show(io::IO, sim::Simulation)
-    print(io, "Simulation($(sim.name) --> $(status[sim.status]))")
-end
-
-mutable struct Sampling
-    simulations::Dict{String,Simulation}
-    path::AbstractString
-
-    function Sampling(path::AbstractString)
-        simulations = Dict{String,Simulation}()
-        cd(path)
-        sampling_path = pwd()
-        for f in readdir("simulations")
-            simulations[f] = Simulation(f)
-        end
-        return new(simulations, sampling_path)
-    end
-end
-
-function show(io::IO, samp::Sampling)
-    print(io, "Sampling($(length(samp.simulations)) simulations)")
 end
 
 function initiate_sampling(path::AbstractString)
