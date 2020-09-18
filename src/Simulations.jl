@@ -148,7 +148,9 @@ function create_job(sim::Simulation, n_cpus::Int64)
                  "echo \"running job $JOB_ID on $HOSTNAME\"",
                  "abq2019 job=$(sim.name) scratch=\"/scratch/tmp\" cpus=$(n_cpus) mp_mode=threads input=$(sim.name).inp interactive"]
     open("simulations/$(sim.name)/job.sh","w") do job
-        println(job,job_lines[i]) for i in 1:length(job_lines)
+        for i in 1:length(job_lines)
+            println(job,job_lines[i])
+        end
     end
     return nothing
 end
