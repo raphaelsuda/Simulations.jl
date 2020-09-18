@@ -98,6 +98,18 @@ function show(io::IO, samp::Sampling)
     print(io, "Sampling($(length(samp.simulations)) simulations)")
 end
 
+function write_model_data(sim::Simulation)
+    model_data = Dict("name" => sim.name,
+                      "α" => sim.α,
+                      "β" => sim.β,
+                      "eps_fin" => sim.eps_fin,
+                      "plot_status" => sim.plot_status)
+    open("simulations/$(sim.name)/model_data.dat","w") do md
+        JSON.print(md, model_data)
+    end
+    return sim.name
+end
+
 function set_plot_status(samp::Sampling, sim_name::String, plot_st::Bool)
     if sim_name in keys(samp.simulations)
         samp.simulations[sim_name].plot_status = plot_st
