@@ -1,5 +1,13 @@
 # This file is machine-generated - editing it directly is not advised
 
+[[AbaqusUnitCell]]
+deps = ["StringArrayEditor"]
+git-tree-sha1 = "d9d206add888085ba97dd874b30cd81b4bc7a02c"
+repo-rev = "master"
+repo-url = "https://github.com/raphaelsuda/AbaqusUnitCell"
+uuid = "af3e129c-b24d-41b7-9263-67b25837aa88"
+version = "0.1.0"
+
 [[ArrayInterface]]
 deps = ["LinearAlgebra", "Requires", "SparseArrays"]
 git-tree-sha1 = "649c08a5a3a513f4662673d3777fe6ccb4df9f5d"
@@ -249,6 +257,12 @@ uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 [[Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
 
+[[MacroTools]]
+deps = ["Markdown", "Random"]
+git-tree-sha1 = "f7d2e3f654af75f01ec49be82c231c382214223a"
+uuid = "1914dd2f-81c6-5fcd-8719-6d5c9610ff09"
+version = "0.5.5"
+
 [[Markdown]]
 deps = ["Base64"]
 uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
@@ -371,6 +385,12 @@ git-tree-sha1 = "127c47b91990c101ee3752291c4f45640eeb03d1"
 uuid = "85a6dd25-e78a-55b7-8502-1745935b8125"
 version = "0.2.3"
 
+[[PrePostCall]]
+deps = ["MacroTools", "Test"]
+git-tree-sha1 = "a7e5c313e182c7e6e5effb41991c70803e68ed79"
+uuid = "6a9148d9-5e9a-5935-86c8-72740ba3a7c7"
+version = "0.0.2"
+
 [[Printf]]
 deps = ["Unicode"]
 uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
@@ -456,6 +476,14 @@ deps = ["DataAPI", "DataStructures", "LinearAlgebra", "Missings", "Printf", "Ran
 git-tree-sha1 = "a6102b1f364befdb05746f386b67c6b7e3262c45"
 uuid = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 version = "0.33.0"
+
+[[StringArrayEditor]]
+deps = ["InteractiveUtils", "PrePostCall"]
+git-tree-sha1 = "724032e7e662b45109f02f70934e06d7a9c77878"
+repo-rev = "master"
+repo-url = "https://github.com/sebastianpech/StringArrayEditor.jl"
+uuid = "9ac07dbc-a56c-11e8-2053-773943ca4811"
+version = "0.1.0"
 
 [[TableTraits]]
 deps = ["IteratorInterfaceExtensions"]
