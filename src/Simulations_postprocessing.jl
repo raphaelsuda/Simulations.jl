@@ -75,6 +75,7 @@ function extract_reaction_forces(sim::Simulation)
     reaction_forces_template(sim)
     cd(simulation_path)
     isdir("abaqus_reports") ? nothing : mkdir("abaqus_reports")
+    @info "$(sim.name): Extracting reaction forces from odb"
     run(`abq2019 cae noGUI=reaction_forces.py`)
     rm("reaction_forces.py")
     open("rf_done","w") do f
@@ -84,3 +85,10 @@ function extract_reaction_forces(sim::Simulation)
     return nothing
 end
     
+function extract_reaction_forces(samp::Sampling)
+    simulations = filter_simulations(samp, 3)
+    for s in values(simulations)
+        extract_reaction_forces(s)
+    end
+    return nothing
+end
