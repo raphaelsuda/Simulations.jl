@@ -73,6 +73,11 @@ mutable struct Simulation
         end
         return new(status, name, α, β, eps_fin, plot_status, linear_max, lin_status, nonlinear_max, fail_status)
     end
+    
+    function Simulation(status::Int64, name::String, α::Number, β::Number, eps_fin::Tuple{Number, Number, Number},
+                        plot_status::Bool, linear_max::Tuple{Number, Number, Number}, lin_status::Int64, nonlinear_max::Tuple{Number, Number, Number}, fail_status::Int64)
+        return new(status, name, α, β, eps_fin, plot_status, linear_max, lin_status, nonlinear_max, fail_status)
+    end
 end
 
 
