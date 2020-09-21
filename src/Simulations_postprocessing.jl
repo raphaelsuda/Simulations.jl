@@ -133,10 +133,104 @@ function compute_stresses(sim::Simulation, area::Array{Number})
     return stresses
 end
 
+function check_nonlin(time::Array{Number},rf::Array{Number},tol::Number,loading::Number)
+    n_data = length(rf)
+
+	if loading >-0.01 && loading < 0.01
+		return n_data
+	end
+    drf_dt = zeros(n_data-1)
+
+    for i in 1:n_data-1
+        drf_dt[i] = (rf[i+1]-rf[i])/(time[i+1]-time[i])
+    end
+
+    stiff_ini = drf_dt[1]
+
+    if (stiff_ini - rf[end]/time[end])/stiff_ini <= 0.1
+        return n_data
+    end
+
+    for i in 2:n_data-1
+        if (stiff_ini-drf_dt[i])/stiff_ini > tol
+            return i
+            break
+        end
+    end
+    return n_data-1
+end
+
+
+function check_nonlin(stresses::Dict{String,Array{Number}},tol::Number,loading::Dict{String,Float64})
+    linlim_ind = Dict{String,Int}()
+    time = stresses["time"]
+
+    for p in keys(stresses)
+        linlim_ind[p] = check_nonlin(time,stresses[p],tol,loading[p])
+    end
+
+    linlim = Dict{String,Float64}()
+    min_linlim_ind = minimum(values(linlim_ind))
+
+    for p in keys(stresses)
+        linlim[p] = stresses[p][min_linlim_ind]
+    end
+    return linlim
+end
+
+function check_max(rf::Array{Number}, tol::Number, loading::Number)
+    n_data = length(rf)
+
+	drf = zeros(n_data-1)
+	
+	if loading >-0.01 && loading < 0.01
+		return n_data
+	end
+
+    for i in 1:n_data-1
+        drf[i] = (rf[i+1]-rf[i])
+    end
+
+    for i in 2:n_data-1
+        if drf[i]/rf[i] < -tol
+            return i
+        end
+    end
+    return n_data
+end
+
+
+function check_max(stresses::Dict{String,Array{Number}},tol::Number,loading::Dict{String,Float64})
+    maxlim_ind = Dict{String,Int}()
+
+    for p in keys(stresses)
+        maxlim_ind[p] = check_max(stresses[p],tol,loading[p])
+    end
+
+    maxlim = Dict{String,Float64}()
+    min_maxlim_ind = minimum(values(maxlim_ind))
+
+    for p in keys(stresses)
+        maxlim[p] = stresses[p][min_maxlim_ind]
+    end
+    return maxlim
+end
+
 function compute_stresses(samp::Sampling)
     simulations = filter_simulations(samp, 4)
     for s in values(simulations)
-        compute_stresses(s, samp.area)
+        stresses = compute_stresses(s, samp.area)
+        loading = Dict("sig_11" => s.eps_fin[1], "sig_33" => s.eps_fin[2], "sig_13" => s.eps_fin[3])
+        linlim = check_nonlin(stresses, 0.1, loading)
+        maxlim = check_max(stresses, 0.05, loading)
+        s.linear_max = (linlim["sig_11"], linlim["sig_33"], linlim["sig_13"])
+        s.nonlinear_max = (maxlim["sig_11"], maxlim["sig_33"], maxlim["sig_13"])
+        open(joinpath("simulations",s.name,"stresses","linear_stresses.dat"),"w") do lsf
+            JSON.print(lsf,s.linear_max)
+        end
+        open(joinpath("simulations",s.name,"stresses","nonlinear_stresses.dat"),"w") do nlsf
+            JSON.print(nlsf,s.nonlinear_max)
+        end
     end
     return nothing
 end
