@@ -165,14 +165,14 @@ function check_nonlin(stresses::Dict{String,Array{Number}},tol::Number,loading::
     linlim_ind = Dict{String,Int}()
     time = stresses["time"]
 
-    for p in keys(stresses)
+    for p in stress_indices
         linlim_ind[p] = check_nonlin(time,stresses[p],tol,loading[p])
     end
 
     linlim = Dict{String,Float64}()
     min_linlim_ind = minimum(values(linlim_ind))
 
-    for p in keys(stresses)
+    for p in stress_indices
         linlim[p] = stresses[p][min_linlim_ind]
     end
     return linlim
@@ -203,14 +203,14 @@ end
 function check_max(stresses::Dict{String,Array{Number}},tol::Number,loading::Dict{String,Float64})
     maxlim_ind = Dict{String,Int}()
 
-    for p in keys(stresses)
+    for p in stress_indices
         maxlim_ind[p] = check_max(stresses[p],tol,loading[p])
     end
 
     maxlim = Dict{String,Float64}()
     min_maxlim_ind = minimum(values(maxlim_ind))
 
-    for p in keys(stresses)
+    for p in stress_indices
         maxlim[p] = stresses[p][min_maxlim_ind]
     end
     return maxlim

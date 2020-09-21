@@ -49,3 +49,6 @@ const stress_areas = Dict("RF11" => 1,
 const stress_strain = Dict("sig_11" => 1,
                            "sig_33" => 2,
                            "sig_13" => 3)
+
+
+const stress_indices = ["sig_11", "sig_33", "sig_13"]
