@@ -267,5 +267,6 @@ function collect_failure_data(samp::Sampling)
 end
 
 include("Simulations_plotting.jl")
+include("Simulations_convert.jl")
 
 end # module
