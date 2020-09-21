@@ -273,5 +273,6 @@ end
 
 include("Simulations_plotting.jl")
 include("Simulations_convert.jl")
+include("Simulations_postprocessing.jl")
 
 end # module
