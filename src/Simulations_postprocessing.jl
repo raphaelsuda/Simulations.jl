@@ -105,7 +105,7 @@ function read_reaction_forces(sim::Simulation)
         time = data[:,1]
         rf = data[:,2]
         reaction_force_path = joinpath("reaction_forces","reaction_forces.dat")
-        reaction_forces = Dict("time" => time, "$(f[:end-1])" => rf)
+        reaction_forces = Dict("time" => time, "$(f[1:end-1])" => rf)
     end
     open(reaction_force_path,"w") do rff
         JSON.print(rff, reaction_forces)
