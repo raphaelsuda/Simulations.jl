@@ -104,7 +104,7 @@ function read_reaction_forces(sim::Simulation)
         data = readdlm(joinpath("abaqus_reports",f), skipstart=2)
         time = data[:,1]
         rf = data[:,2]
-        reaction_forces = Dict("time" => time, "$(f[1:end-1])" => rf)
+        reaction_forces = Dict("time" => time, "$(f[1:end-4])" => rf)
     end
     reaction_force_path = joinpath("reaction_forces","reaction_forces.dat")
     open(reaction_force_path,"w") do rff
