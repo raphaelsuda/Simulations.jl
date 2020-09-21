@@ -1,5 +1,6 @@
 module Simulations
 
+using AbaqusUnitCell
 using CSV
 using DataFrames
 using DelimitedFiles
@@ -88,15 +89,22 @@ end
 mutable struct Sampling
     simulations::Dict{String,Simulation}
     path::AbstractString
+    template::AbqModel
+    area::Array{Number}
     
-    function Sampling(path::AbstractString)
+    function Sampling(path::AbstractString, template_path::AbstractString)
         simulations = Dict{String,Simulation}()
         cd(path)
         sampling_path = pwd()
+        inp = AbqModel(template_path)
+        area = zeros(3)
+        area[1] = inp.dim[2] * inp.dim[3]
+        area[2] = inp.dim[1] * inp.dim[3]
+        area[3] = inp.dim[1] * inp.dim[2]
         for f in readdir("simulations")
             simulations[f] = Simulation(f)
         end
-        return new(simulations, sampling_path)
+        return new(simulations, sampling_path, inp, area)
     end
 end
 
