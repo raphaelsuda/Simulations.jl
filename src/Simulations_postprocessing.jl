@@ -92,3 +92,24 @@ function extract_reaction_forces(samp::Sampling)
     end
     return nothing
 end
+
+function read_reaction_forces(sim::Simulation)
+    #TODO exception if reaction forces not written yet
+    simulation_path = joinpath("simulations", sim.name)
+    cd(simulation_path)
+    isdir("reaction_forces") ? nothing : mkdir("reaction_forces")
+    @info "$(sim.name): Reading reaction forces from rpt"
+    reaction_forces = Dict{String,Array{Number}}()
+    for f in abaqus_report_files
+        data = readdlm(joinpath("abaqus_reports",f), skipstart=2)
+        time = data[:,1]
+        rf = data[:,2]
+        reaction_force_path = joinpath("reaction_forces","reaction_forces.dat")
+        reaction_forces = Dict("time" => time, "$(f[:end-1])" => rf)
+    end
+    open(reaction_force_path,"w") do rff
+        JSON.print(rff, reaction_forces)
+    end
+    return reaction_forces
+end
+

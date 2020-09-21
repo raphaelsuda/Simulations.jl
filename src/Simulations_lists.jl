@@ -35,3 +35,13 @@ const folder_structure = ["figures",
                           "model_data",
                           "simulations",
                           "templates"]
+
+const abaqus_report_files = ["RF11.rpt",
+                             "RF33.rpt",
+                             "RF13.rpt",
+                             "RF31.rpt"]
+
+const stress_areas = Dict("RF11" => 1,
+                          "RF33" => 3,
+                          "RF13" => 1,
+                          "RF31" => 3)
