@@ -103,7 +103,8 @@ function read_reaction_forces(sim::Simulation)
         data = readdlm(joinpath(simulation_path,"abaqus_reports",f), skipstart=2)
         time = data[:,1]
         rf = data[:,2]
-        reaction_forces = Dict("time" => time, "$(f[1:end-4])" => rf)
+        "time" ∈ keys(reaction_forces) ? nothing : reaction_forces["time"] = time
+        reaction_forces["$(f[1:end-4])"] = rf
     end
     reaction_force_path = joinpath(simulation_path,"reaction_forces","reaction_forces.dat")
     open(reaction_force_path,"w") do rff
@@ -112,3 +113,30 @@ function read_reaction_forces(sim::Simulation)
     return reaction_forces
 end
 
+function compute_stresses(sim::Simulation, area::Array{Number})
+    read_reaction_forces(sim)
+    simulation_path = joinpath("simulations", sim.name)
+    isdir(joinpath(simulation_path,"stresses")) ? nothing : mkdir(joinpath(simulation_path,"stresses"))
+    @info "$(sim.name): Computing stresses"
+    stresses = Dict{String,Array{Number}}()
+    reaction_forces = JSON.parsefile(joinpath(simulation_path,"reaction_forces","reaction_forces.dat"))
+    stresses["time"] = reaction_forces["time"]
+    stresses["sig_11"] = reaction_forces["RF11"]./area[1]
+    stresses["sig_33"] = reaction_forces["RF33"]./area[3]
+    stresses["sig_13"] = 1/2 * (reaction_forces["RF13"]./area[1] + reaction_forces["RF31"]./area[3])
+    stress_path = joinpath(simulation_path,"stresses", "stresses.dat")
+    open(stress_path,"w") do sf
+        JSON.print(sf, stresses)
+    end
+    open(joinpath(simulation_path,"stresses_done"), "w") do f
+    end
+    return stresses
+end
+
+function compute_stresses(samp::Sampling)
+    simulations = filter_simulations(samp, 4)
+    for s in values(simulations)
+        compute_stresses(s, samp.area)
+    end
+    return nothing
+end
