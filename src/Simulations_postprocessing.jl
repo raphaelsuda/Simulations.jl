@@ -70,11 +70,11 @@ end
 
 function extract_reaction_forces(sim::Simulation)
     #TODO exception if simulation not ready yet
-    isdir("abaqus_reports") ? nothing : mkdir("abaqus_reports")
     # python files have to be executed in the simulation path
     simulation_path = joinpath("simulations", sim.name)
     reaction_forces_template(sim)
     cd(simulation_path)
+    isdir("abaqus_reports") ? nothing : mkdir("abaqus_reports")
     run(`abq2019 cae noGUI=reaction_forces.py`)
     rm("reaction_forces.py")
     open("rf_done","w") do f
