@@ -17,3 +17,14 @@ function scatter_sampling(samp::Sampling; show_text=true, show_linear=true, titl
     end
     return p
 end
+
+function plot_history(samp::Sampling; title="")
+    simulations = filter_simulations(samp, true)
+    p = plot(legend=:none, title=title)
+    for s in values(simulations)
+        simulation_path = joinpath("simulations",s.name)
+        stresses = JSON.parsefile(joinpath(simulation_path,"stresses","stresses.dat"))
+        plot!(p,stresses["sig_11"],stresses["sig_33"])
+    end
+    return p
+end
