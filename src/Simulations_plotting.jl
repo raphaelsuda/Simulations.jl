@@ -35,12 +35,10 @@ function contour_lourenco(samp::Sampling,xlims::Tuple{Number,Number},ylims::Tupl
     y = ylims[1]:0.1:ylims[2]
     n_x = length(x)
     n_y = length(y)
-    x = ones(length(x)) * collect(x)'
-    y = collect(y) * ones(length(y))'
     τ = zeros(n_y,n_x)
     for i in 1:n_y
         for j in 1:n_x
-            τ[i,j] = τ_lourenco(x[i,j],y[i,j],Lourenco(parameters["f_tx"], parameters["f_tz"], parameters["f_mx"], parameters["f_mz"], parameters["f_α"], parameters["f_β"], parameters["f_γ"]))
+            τ[i,j] = τ_lourenco(x[j],y[i],Lourenco(parameters["f_tx"], parameters["f_tz"], parameters["f_mx"], parameters["f_mz"], parameters["f_α"], parameters["f_β"], parameters["f_γ"]))
         end
     end
     c = contour(x,y,τ)
