@@ -161,7 +161,7 @@ function check_nonlin(time::Array,rf::Array,tol::Number,loading::Number)
 end
 
 
-function check_nonlin(stresses::Dict{String,Array},tol::Number,loading::Dict{String,Float64})
+function check_nonlin(stresses::Dict{String,Any},tol::Number,loading::Dict{String,Float64})
     linlim_ind = Dict{String,Int}()
     time = stresses["time"]
 
@@ -200,7 +200,7 @@ function check_max(rf::Array, tol::Number, loading::Number)
 end
 
 
-function check_max(stresses::Dict{String,Array},tol::Number,loading::Dict{String,Float64})
+function check_max(stresses::Dict{String,Any},tol::Number,loading::Dict{String,Float64})
     maxlim_ind = Dict{String,Int}()
 
     for p in stress_indices
