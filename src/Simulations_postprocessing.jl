@@ -136,7 +136,7 @@ end
 function check_nonlin(time::Array,rf::Array,tol::Number,loading::Number)
     n_data = length(rf)
 
-	if loading >-0.01 && loading < 0.01
+	if loading >-0.0001 && loading < 0.0001
 		return n_data
 	end
     drf_dt = zeros(n_data-1)
@@ -183,7 +183,7 @@ function check_max(rf::Array, tol::Number, loading::Number)
 
 	drf = zeros(n_data-1)
 	
-	if loading >-0.01 && loading < 0.01
+	if loading >-0.0001 && loading < 0.0001
 		return n_data
 	end
 
