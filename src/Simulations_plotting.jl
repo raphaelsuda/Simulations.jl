@@ -1,7 +1,7 @@
 function scatter_sampling(samp::Sampling; show_text=true, show_linear=true)
     plot_simulations_data = CSV.read("plot_failure_data.dat")
     n_simulations = nrow(plot_simulations_data)
-    p = plot(legend = :outertopright)
+    p = plot(legend = :outertopleft)
     if show_linear
         for i in 1:n_simulations
             line_xx = [plot_simulations_data[i,:sig_xx_lin] plot_simulations_data[i,:sig_xx_nonlin]]
