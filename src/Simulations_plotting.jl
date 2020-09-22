@@ -4,9 +4,9 @@ function scatter_sampling(samp::Sampling; show_text=true, show_linear=true, titl
     p = plot(legend = :bottomleft, title=title, xlims=xlims, ylims=ylims)
     if show_linear
         for i in 1:n_simulations
-            line_xx = [plot_simulations_data[i,:sig_xx_lin] plot_simulations_data[i,:sig_xx_nonlin]]
-            line_zz = [plot_simulations_data[i,:sig_zz_lin] plot_simulations_data[i,:sig_zz_nonlin]]
-            plot!(p, line_xx, line_zz, color=:gray, style=:dash)
+            line_xx = [plot_simulations_data[i,:sig_xx_lin], plot_simulations_data[i,:sig_xx_nonlin]]
+            line_zz = [plot_simulations_data[i,:sig_zz_lin], plot_simulations_data[i,:sig_zz_nonlin]]
+            plot!(p, line_xx, line_zz, color=:gray, style=:dash, label=:none)
         end
         scatter!(p, plot_simulations_data[!,:sig_xx_lin], plot_simulations_data[!,:sig_zz_lin], zcolor=plot_simulations_data[!,:sig_xz_lin], m = (:heat, :ltriangle), label="linear max")
     end
