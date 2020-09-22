@@ -30,7 +30,7 @@ function plot_history(samp::Sampling; title="")
 end
 
 function contour_lourenco(samp::Sampling,xlims::Tuple{Number,Number},ylims::Tuple{Number,Number})
-    parameters = JSON.parsefile(joinpath("model_data","lourenco_parameters_optim.dat"))
+    parameters = JSON.parsefile(joinpath(samp.path,"model_data","lourenco_parameters_optim.dat"))
     x = xlims[1]:0.1:xlims[2]
     y = ylims[1]:0.1:ylims[2]
     n_x = length(x)
@@ -41,6 +41,22 @@ function contour_lourenco(samp::Sampling,xlims::Tuple{Number,Number},ylims::Tupl
             τ[i,j] = τ_lourenco(x[j],y[i],Lourenco(parameters["f_tx"], parameters["f_tz"], parameters["f_mx"], parameters["f_mz"], parameters["f_α"], parameters["f_β"], parameters["f_γ"]))
         end
     end
-    c = contour(x,y,τ,:heat)
+    c = contour(x,y,τ,color=:heat)
     return c
+end
+
+function contour_lourenco!(p::Plot,samp::Sampling,xlims::Tuple{Number,Number},ylims::Tuple{Number,Number})
+    parameters = JSON.parsefile(joinpath(samp.path,"model_data","lourenco_parameters_optim.dat"))
+    x = xlims[1]:0.1:xlims[2]
+    y = ylims[1]:0.1:ylims[2]
+    n_x = length(x)
+    n_y = length(y)
+    τ = zeros(n_y,n_x)
+    for i in 1:n_y
+        for j in 1:n_x
+            τ[i,j] = τ_lourenco(x[j],y[i],Lourenco(parameters["f_tx"], parameters["f_tz"], parameters["f_mx"], parameters["f_mz"], parameters["f_α"], parameters["f_β"], parameters["f_γ"]))
+        end
+    end
+    contour!(p,x,y,τ,color=:heat)
+    return p
 end
