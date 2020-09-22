@@ -45,7 +45,7 @@ function contour_lourenco(samp::Sampling,xlims::Tuple{Number,Number},ylims::Tupl
     return c
 end
 
-function contour_lourenco!(p::Plot,samp::Sampling,xlims::Tuple{Number,Number},ylims::Tuple{Number,Number})
+function contour_lourenco!(p::Plots.Plot,samp::Sampling,xlims::Tuple{Number,Number},ylims::Tuple{Number,Number})
     parameters = JSON.parsefile(joinpath(samp.path,"model_data","lourenco_parameters_optim.dat"))
     x = xlims[1]:0.1:xlims[2]
     y = ylims[1]:0.1:ylims[2]
