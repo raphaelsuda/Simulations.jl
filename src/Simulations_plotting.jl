@@ -30,9 +30,9 @@ function scatter_sampling!(p::Plots.Plot,samp::Sampling; show_text=true, show_li
         scatter!(p, plot_simulations_data[!,:sig_xx_lin], plot_simulations_data[!,:sig_zz_lin], zcolor=plot_simulations_data[!,:sig_xz_lin], m = (:heat, :ltriangle), label="linear max")
     end
 	if show_text
-		scatter!(p, plot_simulations_data[!,:sig_xx_nonlin], plot_simulations_data[!,:sig_zz_nonlin], zcolor=plot_simulations_data[!,:sig_xz_nonlin], m = (:heat), label="overall max", xlims=xlims, ylims=ylims, series_annotations = Plots.text.(plot_simulations_data["simulation"], 3, :gray, :topleft))
+		scatter!(p, plot_simulations_data[!,:sig_xx_nonlin], plot_simulations_data[!,:sig_zz_nonlin], zcolor=plot_simulations_data[!,:sig_xz_nonlin], m = (:heat), label="overall max", xlims=xlims, ylims=ylims, legend=:bottomleft, series_annotations = Plots.text.(plot_simulations_data["simulation"], 3, :gray, :topleft))
 	else
-		scatter!(p, plot_simulations_data[!,:sig_xx_nonlin], plot_simulations_data[!,:sig_zz_nonlin], zcolor=plot_simulations_data[!,:sig_xz_nonlin], m = (:heat), label="overall max", xlims=xlims, ylims=ylims)
+		scatter!(p, plot_simulations_data[!,:sig_xx_nonlin], plot_simulations_data[!,:sig_zz_nonlin], zcolor=plot_simulations_data[!,:sig_xz_nonlin], m = (:heat), label="overall max", xlims=xlims, ylims=ylims, legend=:bottomleft)
     end
     return p
 end
