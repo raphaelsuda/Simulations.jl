@@ -28,3 +28,10 @@ function plot_history(samp::Sampling; title="")
     end
     return p
 end
+
+function contour_lourenco(samp::Sampling,xlims::Tuple{Number,Number},ylims::Tuple{Number,Number})
+    parameters = JSON.parsefile(joinpath("model_data","lourenco_parameters_optim.dat"))
+    x = xlims[1]:0.1:xlims[2]
+    y = ylims[1]:0.1:ylims[2]
+    x = ones(length(x)) * collect(x)'
+    y = collect(y) * ones(length(y))'
