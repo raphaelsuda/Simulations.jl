@@ -133,7 +133,7 @@ function compute_stresses(sim::Simulation, area::Array{Number})
     return stresses
 end
 
-function check_nonlin(time::Array,rf::Array,tol::Number,loading::Number)
+function check_nonlin(time::Array{Number},rf::Array{Number},tol::Number,loading::Number)
     n_data = length(rf)
 
 	if loading >-0.0001 && loading < 0.0001
@@ -161,7 +161,7 @@ function check_nonlin(time::Array,rf::Array,tol::Number,loading::Number)
 end
 
 
-function check_nonlin(stresses::Dict{String,Any},tol::Number,loading::Dict{String,Float64})
+function check_nonlin(stresses::Dict{String,Array{Number}},tol::Number,loading::Dict{String,Float64})
     linlim_ind = Dict{String,Int}()
     time = stresses["time"]
 
@@ -178,7 +178,7 @@ function check_nonlin(stresses::Dict{String,Any},tol::Number,loading::Dict{Strin
     return linlim
 end
 
-function check_max(rf::Array, tol::Number, loading::Number)
+function check_max(rf::Array{Number}, tol::Number, loading::Number)
     n_data = length(rf)
 
 	drf = zeros(n_data-1)
@@ -200,7 +200,7 @@ function check_max(rf::Array, tol::Number, loading::Number)
 end
 
 
-function check_max(stresses::Dict{String,Any},tol::Number,loading::Dict{String,Float64})
+function check_max(stresses::Dict{String,Array{Number}},tol::Number,loading::Dict{String,Float64})
     maxlim_ind = Dict{String,Int}()
 
     for p in stress_indices
