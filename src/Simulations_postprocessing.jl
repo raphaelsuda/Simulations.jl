@@ -147,7 +147,7 @@ function check_nonlin(time::Array{Number},rf::Array{Number},tol::Number,loading:
 
     stiff_ini = drf_dt[1]
 
-    if (stiff_ini - rf[end]/time[end])/stiff_ini <= 0.1
+    if (stiff_ini - rf[end]/time[end])/stiff_ini <= tol
         return n_data
     end
 
@@ -216,7 +216,7 @@ function check_max(stresses::Dict{String,Array{Number}},tol::Number,loading::Dic
     return maxlim
 end
 
-function compute_stresses(samp::Sampling)
+function compute_stresses(samp::Sampling; lin_tol=0.025, max_tol=0.05)
     simulations = filter_simulations(samp, 4)
     for s in values(simulations)
         stresses = compute_stresses(s, samp.area)
