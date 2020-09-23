@@ -234,3 +234,22 @@ function compute_stresses(samp::Sampling; lin_tol=0.025, max_tol=0.05)
     end
     return nothing
 end
+
+function recompute_stresses(samp::Sampling; lin_tol=0.025, max_tol=0.05)
+    simulations = filter_simulations(samp, 5)
+    for s in values(simulations)
+        stresses = compute_stresses(s, samp.area)
+        loading = Dict("sig_11" => s.eps_fin[1], "sig_33" => s.eps_fin[2], "sig_13" => s.eps_fin[3])
+        linlim = check_nonlin(stresses, 0.025, loading)
+        maxlim = check_max(stresses, 0.05, loading)
+        s.linear_max = (linlim["sig_11"], linlim["sig_33"], linlim["sig_13"])
+        s.nonlinear_max = (maxlim["sig_11"], maxlim["sig_33"], maxlim["sig_13"])
+        open(joinpath("simulations",s.name,"stresses","linear_stresses.dat"),"w") do lsf
+            JSON.print(lsf,s.linear_max)
+        end
+        open(joinpath("simulations",s.name,"stresses","nonlinear_stresses.dat"),"w") do nlsf
+            JSON.print(nlsf,s.nonlinear_max)
+        end
+    end
+    return nothing
+end
