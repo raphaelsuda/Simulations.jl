@@ -14,7 +14,7 @@ function scatter_sampling(samp::Sampling; show_text=true, show_linear=true, titl
         return split(s,'-')[end]
     end
 	if show_text
-		scatter!(p, plot_simulations_data[!,:sig_xx_nonlin], plot_simulations_data[!,:sig_zz_nonlin], zcolor=plot_simulations_data[!,:sig_xz_nonlin], m = (:heat), label="overall max", series_annotations = Plots.text.(names, 3, :gray, :topleft))
+		scatter!(p, plot_simulations_data[!,:sig_xx_nonlin], plot_simulations_data[!,:sig_zz_nonlin], zcolor=plot_simulations_data[!,:sig_xz_nonlin], m = (:heat), label="overall max", series_annotations = Plots.text.(names, 3, :gray, :top, :left))
 	else
 		scatter!(p, plot_simulations_data[!,:sig_xx_nonlin], plot_simulations_data[!,:sig_zz_nonlin], zcolor=plot_simulations_data[!,:sig_xz_nonlin], m = (:heat), label="overall max")
     end
@@ -32,8 +32,11 @@ function scatter_sampling!(p::Plots.Plot,samp::Sampling; show_text=true, show_li
         end
         scatter!(p, plot_simulations_data[!,:sig_xx_lin], plot_simulations_data[!,:sig_zz_lin], zcolor=plot_simulations_data[!,:sig_xz_lin], m = (:heat, :ltriangle), label="linear max")
     end
+    names = map(plot_simulations_data[!,:simulation]) do s
+        return split(s,'-')[end]
+    end
 	if show_text
-		scatter!(p, plot_simulations_data[!,:sig_xx_nonlin], plot_simulations_data[!,:sig_zz_nonlin], zcolor=plot_simulations_data[!,:sig_xz_nonlin], m = (:heat), label="overall max", xlims=xlims, ylims=ylims, legend=:bottomleft, series_annotations = Plots.text.(plot_simulations_data["simulation"], 3, :gray, :topleft))
+		scatter!(p, plot_simulations_data[!,:sig_xx_nonlin], plot_simulations_data[!,:sig_zz_nonlin], zcolor=plot_simulations_data[!,:sig_xz_nonlin], m = (:heat), label="overall max", xlims=xlims, ylims=ylims, legend=:bottomleft, series_annotations = Plots.text.(names, 3, :gray, :top, :left))
 	else
 		scatter!(p, plot_simulations_data[!,:sig_xx_nonlin], plot_simulations_data[!,:sig_zz_nonlin], zcolor=plot_simulations_data[!,:sig_xz_nonlin], m = (:heat), label="overall max", xlims=xlims, ylims=ylims, legend=:bottomleft)
     end
