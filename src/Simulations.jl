@@ -318,6 +318,19 @@ function run_simulation(samp::Sampling, n::Int64; random=true)
     return simulations_to_run
 end
 
+function check_progress(sim::Simulation)
+    run(`tail -n 1 $(joinpath("simulations",sim.name,"$(sim.name).sta"))`)
+    return nothing
+end
+
+function check_progress(samp::Sampling)
+    simulations = filter_simulations(samp, 2)
+    for s in values(simulations)
+        check_progress(s)
+    end
+    return collect(keys(simulations))
+end
+
 
 include("Simulations_lourenco.jl")
 include("Simulations_plotting.jl")
