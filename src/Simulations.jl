@@ -96,11 +96,32 @@ mutable struct Sampling
         simulations = Dict{String,Simulation}()
         cd(path)
         sampling_path = pwd()
-        inp = AbqModel(template_path)
-        area = zeros(3)
-        area[1] = inp.dim[2] * inp.dim[3]
-        area[2] = inp.dim[1] * inp.dim[3]
-        area[3] = inp.dim[1] * inp.dim[2]
+        if "dimensions.dat" in readdir(joinpath(path, "model_data"))
+            dim = JSON.parsefile(joinpath(path,"model_data","dimensions.dat"))
+            if "area.dat" in readdir(joinpath(path,"model_data"))
+                area = JSON.parsefile(joinpath(path,"model_data","area.dat"))
+            else
+                area = zeros(3)
+                area[1] = dim[2] * dim[3]
+                area[2] = dim[1] * dim[3]
+                area[3] = dim[1] * dim[2]
+                open(joinpath(path,"model_data","area.dat"), "w") do af
+                    JSON.print(af, area)
+                end
+            end
+        else
+            inp = AbqModel(template_path)
+            area = zeros(3)
+            area[1] = inp.dim[2] * inp.dim[3]
+            area[2] = inp.dim[1] * inp.dim[3]
+            area[3] = inp.dim[1] * inp.dim[2]
+            open(joinpath(path,"model_data","dimensions.dat"), "w") do df
+                JSON.print(df, inp.dim)
+            end
+            open(joinpath(path,"model_data","area.dat"), "w") do af
+                JSON.print(af, area)
+            end
+        end
         for f in readdir("simulations")
             simulations[f] = Simulation(f)
         end
