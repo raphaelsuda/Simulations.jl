@@ -89,7 +89,6 @@ end
 mutable struct Sampling
     simulations::Dict{String,Simulation}
     path::AbstractString
-    template::AbqModel
     area::Array{Number}
     
     function Sampling(path::AbstractString, template_path::AbstractString)
@@ -125,7 +124,7 @@ mutable struct Sampling
         for f in readdir("simulations")
             simulations[f] = Simulation(f)
         end
-        return new(simulations, sampling_path, inp, area)
+        return new(simulations, sampling_path, area)
     end
 end
 
