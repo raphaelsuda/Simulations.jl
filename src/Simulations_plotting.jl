@@ -2,6 +2,9 @@ function scatter_sampling(samp::Sampling; show_text=true, show_linear=true, titl
     plot_simulations_data = CSV.read("plot_failure_data.dat")
     n_simulations = nrow(plot_simulations_data)
     p = plot(legend = :bottomleft, title=title, xlims=xlims, ylims=ylims)
+    xlabel!(p, "Effective stress σ_xx in MPa")
+    ylabel!(p, "Effective stress σ_zz in MPa")
+    zlabel!(p, "Effective stress τ_xz in MPa")
     if show_linear
         for i in 1:n_simulations
             line_xx = [plot_simulations_data[i,:sig_xx_lin], plot_simulations_data[i,:sig_xx_nonlin]]
@@ -48,6 +51,8 @@ end
 function plot_history(samp::Sampling; title="", save_plot=false, file="stresses_history.pdf")
     simulations = filter_simulations(samp, true)
     p = plot(title=title)
+    xlabel!(p, "Effective stress σ_xx in MPa")
+    ylabel!(p, "Effective stress σ_zz in MPa")
     for s in values(simulations)
         simulation_path = joinpath("simulations",s.name)
         stresses = JSON.parsefile(joinpath(simulation_path,"stresses","stresses.dat"))
@@ -70,6 +75,9 @@ function contour_lourenco(samp::Sampling,xlims::Tuple{Number,Number},ylims::Tupl
         end
     end
     c = contour(x,y,τ,color=:heat)
+    xlabel!(c, "Effective stress σ_xx in MPa")
+    ylabel!(c, "Effective stress σ_zz in MPa")
+    zlabel!(c, "Effective stress τ_xz in MPa")
     save_plot || file != "contour_lourenco.pdf" ? savefig(c,joinpath("figures",file)) : nothing
     return c
 end
