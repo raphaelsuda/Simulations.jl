@@ -4,7 +4,6 @@ function scatter_sampling(samp::Sampling; show_text=true, show_linear=true, titl
     p = plot(legend = :bottomleft, title=title, xlims=xlims, ylims=ylims)
     xlabel!(p, "Effective stress σ_xx in MPa")
     ylabel!(p, "Effective stress σ_zz in MPa")
-    zlabel!(p, "Effective stress τ_xz in MPa")
     if show_linear
         for i in 1:n_simulations
             line_xx = [plot_simulations_data[i,:sig_xx_lin], plot_simulations_data[i,:sig_xx_nonlin]]
@@ -77,7 +76,6 @@ function contour_lourenco(samp::Sampling,xlims::Tuple{Number,Number},ylims::Tupl
     c = contour(x,y,τ,color=:heat)
     xlabel!(c, "Effective stress σ_xx in MPa")
     ylabel!(c, "Effective stress σ_zz in MPa")
-    zlabel!(c, "Effective stress τ_xz in MPa")
     save_plot || file != "contour_lourenco.pdf" ? savefig(c,joinpath("figures",file)) : nothing
     return c
 end
