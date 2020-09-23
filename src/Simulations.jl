@@ -323,7 +323,8 @@ function check_progress(sim::Simulation)
         @info "$(sim.name):"
         run(`tail -n 1 $(joinpath("simulations",sim.name,"$(sim.name).sta"))`)
     else
-        @info "$(sim.name): sta-file not write yet"
+        @info "$(sim.name):"
+        println("   sta-file not written yet")
     end
     return nothing
 end
