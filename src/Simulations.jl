@@ -319,7 +319,12 @@ function run_simulation(samp::Sampling, n::Int64; random=true)
 end
 
 function check_progress(sim::Simulation)
-    run(`tail -n 1 $(joinpath("simulations",sim.name,"$(sim.name).sta"))`)
+    if "$(sim.name).sta" in readdir(joinpath("simulations",sim.name))
+        @info "$(sim.name):"
+        run(`tail -n 1 $(joinpath("simulations",sim.name,"$(sim.name).sta"))`)
+    else
+        @info "$(sim.name): sta-file not write yet"
+    end
     return nothing
 end
 
