@@ -299,6 +299,26 @@ function collect_failure_data(samp::Sampling)
     return plot_df
 end
 
+function run_simulation(sim::Simulation)
+    cd(joinpath("simulations",sim.name))
+    run(`qsub job.sh`)
+    cd("..")
+    cd("..")
+    return nothing
+end
+
+function run_simulation(samp::Sampling, n::Int64; random=true)
+    simulations = filter_simulations(samp, 1)
+    if random
+        simulations_to_run = rand(collect(keys(simulations)),n)
+        for s in simulations_to_run
+            run_simulation(simulations[s])
+        end
+    end
+    return simulations_to_run
+end
+
+
 include("Simulations_lourenco.jl")
 include("Simulations_plotting.jl")
 include("Simulations_convert.jl")
