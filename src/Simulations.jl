@@ -83,7 +83,7 @@ end
 
 
 function show(io::IO, sim::Simulation)
-    print(io, "Simulation($(sim.name) --> $(status[sim.status]))")
+    print(io, "Simulation($(sim.name) --> $(status[sim.status]), plot_status=$(sim.plot_status))")
 end
 
 mutable struct Sampling
