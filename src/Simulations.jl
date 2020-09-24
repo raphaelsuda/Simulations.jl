@@ -310,7 +310,12 @@ end
 function run_simulation(samp::Sampling, n::Int64; random=true)
     simulations = filter_simulations(samp, 1)
     if random
-        simulations_to_run = rand(collect(keys(simulations)),n)
+        simulations_to_run = String[]
+        for i in 1:n
+            new_sim = rand(collect(keys(simulations)))
+            push!(simulations_to_run, new_sim)
+            delete!(simulations, new_sim)
+        end
         for s in simulations_to_run
             run_simulation(simulations[s])
         end
