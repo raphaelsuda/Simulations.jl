@@ -319,6 +319,7 @@ function run_simulation(samp::Sampling, n::Int64; random=true)
         end
         for s in simulations_to_run
             run_simulation(simulations[s])
+            samp.simulations[s].status = 2
         end
     end
     return simulations_to_run

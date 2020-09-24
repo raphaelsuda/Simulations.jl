@@ -89,6 +89,7 @@ function extract_reaction_forces(samp::Sampling)
     simulations = filter_simulations(samp, 3)
     for s in values(simulations)
         extract_reaction_forces(s)
+        samp.simulations[s.name].status = 4
     end
     return nothing
 end
@@ -231,6 +232,7 @@ function compute_stresses(samp::Sampling; lin_tol=0.025, max_tol=0.05)
         open(joinpath("simulations",s.name,"stresses","nonlinear_stresses.dat"),"w") do nlsf
             JSON.print(nlsf,s.nonlinear_max)
         end
+        samp.simulations[s.name].status = 5
     end
     return nothing
 end
