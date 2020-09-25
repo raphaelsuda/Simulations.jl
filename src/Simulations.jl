@@ -299,8 +299,9 @@ function collect_failure_data(samp::Sampling)
     return plot_df
 end
 
-function run_simulation(sim::Simulation)
+function run_simulation(sim::Simulation; n_cpus=2)
     cd(joinpath("simulations",sim.name))
+    create_job(sim, n_cpus)
     run(`qsub job.sh`)
     cd("..")
     cd("..")
