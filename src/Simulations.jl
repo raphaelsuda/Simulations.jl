@@ -12,7 +12,13 @@ using Plots
 import Base.show
 export Sampling,
        initiate_sampling,
-       filter_simulations
+       filter_simulations,
+       extract_reaction_forces,
+       compute_stresses,
+       run_simulation,
+       set_plot_status,
+       check_progress,
+       collect_failure_data
 
 include("Simulations_lists.jl")
 
