@@ -62,7 +62,7 @@ mutable struct Simulation
 
     function Simulation(name::String)
         status = check_status(name)
-        ID = parse(Int64, split(name)[end])
+        ID = parse(Int64, split(name,'-')[end])
         α = 0.0
         β = 0.0
         eps_fin = (0.0,0.0,0.0)
