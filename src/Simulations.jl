@@ -18,7 +18,11 @@ export Sampling,
        run_simulation,
        set_plot_status,
        check_progress,
-       collect_failure_data
+       collect_failure_data,
+       scatter_sampling,
+       scatter_sampling!,
+       contour_lourenco,
+       contour_lourenco!
 
 include("Simulations_lists.jl")
 
@@ -264,7 +268,7 @@ function create_job(sim::Simulation, n_cpus::Int64)
                  "#\$ -m beas",
                  "",
                  "echo `date`",
-                 "echo \"running job $JOB_ID on $HOSTNAME\"",
+                 "echo \"running job \$JOB_ID on \$HOSTNAME\"",
                  "abq2019 job=$(sim.name) scratch=\"/scratch/tmp\" cpus=$(n_cpus) mp_mode=threads input=$(sim.name).inp interactive"]
     open("simulations/$(sim.name)/job.sh","w") do job
         for i in 1:length(job_lines)
