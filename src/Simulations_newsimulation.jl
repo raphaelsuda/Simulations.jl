@@ -73,8 +73,8 @@ function new_simulation(samp::Sampling, α::Number, β::Number; r=20.0)
     load_path = joinpath(samp.path, "templates", "$(samp.name_template)-Template.inp")
     save_path = joinpath(samp.path, "simulations", sim_name, "$(sim_name).inp")
     generate_model(load_path, save_path, loading_strain[1], loading_strain[2], loading_strain[3])
-    run(`sed -i -e "s/Output, field/Output, field, frequency=5/g" $(save_path).inp`)
-    run(`sed -i -e "s/\*Node Output, nset=SWB/\*Output, field\n\*Node Output, nset=SWB/" $(save_path).inp`)
+    run(`sed -i -e "s/Output, field/Output, field, frequency=5/g" $(save_path)`)
+    run(`sed -i -e "s/\*Node Output, nset=SWB/\*Output, field\n\*Node Output, nset=SWB/" $(save_path)`)
     simulation = Simulation(1, sim_name,ID, α, β,
                             (loading_strain[1], loading_strain[2], loading_strain[3]),
                             false, (0,0,0), 0, (0,0,0), 0)
