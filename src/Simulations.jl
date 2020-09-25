@@ -352,6 +352,7 @@ function check_progress(samp::Sampling)
 end
 
 
+include("Simulations_stiffness.jl")
 include("Simulations_lourenco.jl")
 include("Simulations_plotting.jl")
 include("Simulations_convert.jl")
