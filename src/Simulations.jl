@@ -4,6 +4,7 @@ using AbaqusUnitCell
 using CSV
 using DataFrames
 using DelimitedFiles
+using Formatting
 using JSON
 using Optim
 using Statistics
