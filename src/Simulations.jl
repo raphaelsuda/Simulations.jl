@@ -387,12 +387,12 @@ function rm_model(samp::Sampling, sim_name::String)
     delete!(samp.simulations, sim_name)
     sim_path = joinpath(samp.path, "simulations", sim_name)
     for f in readdir(sim_path)
-        if isdir(f)
+        if isdir(joinpath(sim_path, f)
             for g in readdir(joinpath(sim_path, f))
-                rm(g)
+                rm(joinpath(sim_path, f, g))
             end
         end
-        rm(f)
+        rm(joinpath(sim_path, f))
     end
     rm(sim_path)
     return nothing
