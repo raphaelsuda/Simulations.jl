@@ -102,6 +102,7 @@ mutable struct Sampling
     simulations::Dict{String,Simulation}
     path::AbstractString
     area::Array{Number}
+    max_ID::Int64
     
     function Sampling(path::AbstractString, template_path::AbstractString)
         simulations = Dict{String,Simulation}()
@@ -136,7 +137,8 @@ mutable struct Sampling
         for f in readdir("simulations")
             simulations[f] = Simulation(f)
         end
-        return new(simulations, sampling_path, area)
+        max_ID = maximum(parse.(Int64, split.(collect(keys(simulations)), '-')))
+        return new(simulations, sampling_path, area, max_ID)
     end
 end
 
