@@ -355,6 +355,22 @@ function check_progress(samp::Sampling)
     return collect(keys(simulations))
 end
 
+function rename_simulation(samp::Sampling, sim_name::String, new_name::String)
+    samp.simulations["sim_name"].name = new_name
+    cd(joinpath(samp.path, "simulations", sim_name))
+    for f in readdir()
+        if f[1:length(sim_name)] == sim_name
+            ending = split(f,'.')[end]
+            mv(f,"$(new_name).$(ending)")
+        end
+    end
+    run(`sed -i -e 's/$(sim_name)/$(new_name)/g' job.sh`)
+    run(`sed -i -e 's/$(sim_name)/$(new_name)/g' model_data.dat`)
+    cd("..")
+    mv(sim_name, new_name)
+    cd(samp.path)
+    return new_name
+end
 
 include("Simulations_stiffness.jl")
 include("Simulations_lourenco.jl")
