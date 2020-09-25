@@ -109,7 +109,7 @@ mutable struct Sampling
         simulations = Dict{String,Simulation}()
         cd(path)
         sampling_path = pwd()
-        name_template = join(split(splitpath(template_path), '-')[1:end-1], '-')
+        name_template = join(split(splitpath(template_path)[end], '-')[1:end-1], '-')
         if "dimensions.dat" in readdir(joinpath(path, "model_data"))
             dim = JSON.parsefile(joinpath(path,"model_data","dimensions.dat"))
             if "area.dat" in readdir(joinpath(path,"model_data"))
