@@ -300,8 +300,8 @@ function collect_failure_data(samp::Sampling)
 end
 
 function run_simulation(sim::Simulation; n_cpus=2)
-    cd(joinpath("simulations",sim.name))
     create_job(sim, n_cpus)
+    cd(joinpath("simulations",sim.name))
     run(`qsub job.sh`)
     cd("..")
     cd("..")
