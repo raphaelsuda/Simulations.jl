@@ -359,7 +359,7 @@ function rename_simulation(samp::Sampling, sim_name::String, new_name::String)
     samp.simulations[sim_name].name = new_name
     cd(joinpath(samp.path, "simulations", sim_name))
     for f in readdir()
-        if f[1:length(sim_name)] == sim_name
+        if length(f) >= length(sim_name) && f[1:length(sim_name)] == sim_name
             ending = split(f,'.')[end]
             mv(f,"$(new_name).$(ending)")
         end
