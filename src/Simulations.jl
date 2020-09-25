@@ -375,6 +375,12 @@ function rename_simulation(samp::Sampling, sim_name::String, new_name::String)
     return new_name
 end
 
+function rm_model(samp::Sampling, sim_name::String)
+    delete!(samp.simulations, sim_name)
+    rm(joinpath(samp.path, "simulations", sim_name))
+    return nothing
+end
+
 include("Simulations_stiffness.jl")
 include("Simulations_lourenco.jl")
 include("Simulations_plotting.jl")
