@@ -389,6 +389,7 @@ function rm_model(samp::Sampling, sim_name::String)
     return nothing
 end
 
+include("Simulations_newsimulation.jl")
 include("Simulations_stiffness.jl")
 include("Simulations_lourenco.jl")
 include("Simulations_plotting.jl")
