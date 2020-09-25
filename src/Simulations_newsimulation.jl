@@ -67,7 +67,7 @@ function new_simulation(samp::Sampling, α::Number, β::Number; r=20.0)
     samp.max_ID = ID
     sim_name = string(samp.name_template,"-",format("{1:03d}", ID))
     mkdir(joinpath(samp.path, "simulations", sim_name))
-    stiffness = JSON.parsefile(joinpath(samp.path, "model_data", "stiffness.dat"))
+    stiffness = readdlm(joinpath(samp.path, "model_data", "stiffness.dat"), ';')
     loading_stress = calc_stresses(r, α, β)
     loading_strain = strains(stiffness, loading_stress, 1.0)
     load_path = joinpath(samp.path, samp.temp_path)
