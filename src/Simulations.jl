@@ -50,6 +50,7 @@ end
 mutable struct Simulation
     status::Int
     name::String
+    ID::Int64
     α::Number
     β::Number
     eps_fin::Tuple{Number, Number, Number}
@@ -61,6 +62,7 @@ mutable struct Simulation
 
     function Simulation(name::String)
         status = check_status(name)
+        ID = split(name)[end]
         α = 0.0
         β = 0.0
         eps_fin = (0.0,0.0,0.0)
@@ -82,12 +84,12 @@ mutable struct Simulation
             linear_max = Tuple(JSON.parsefile("simulations/$(name)/stresses/linear_stresses.dat"))
             nonlinear_max = Tuple(JSON.parsefile("simulations/$(name)/stresses/nonlinear_stresses.dat"))
         end
-        return new(status, name, α, β, eps_fin, plot_status, linear_max, lin_status, nonlinear_max, fail_status)
+        return new(status, name, ID, α, β, eps_fin, plot_status, linear_max, lin_status, nonlinear_max, fail_status)
     end
     
-    function Simulation(status::Int64, name::String, α::Number, β::Number, eps_fin::Tuple{Number, Number, Number},
+    function Simulation(status::Int64, name::String, ID::Int64, α::Number, β::Number, eps_fin::Tuple{Number, Number, Number},
                         plot_status::Bool, linear_max::Tuple{Number, Number, Number}, lin_status::Int64, nonlinear_max::Tuple{Number, Number, Number}, fail_status::Int64)
-        return new(status, name, α, β, eps_fin, plot_status, linear_max, lin_status, nonlinear_max, fail_status)
+        return new(status, name, ID, α, β, eps_fin, plot_status, linear_max, lin_status, nonlinear_max, fail_status)
     end
 end
 
@@ -144,6 +146,7 @@ end
 
 function write_model_data(sim::Simulation)
     model_data = Dict("name" => sim.name,
+                      "ID" => sim.ID,
                       "α" => sim.α,
                       "β" => sim.β,
                       "eps_fin" => sim.eps_fin,
