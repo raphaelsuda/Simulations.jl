@@ -299,7 +299,7 @@ function collect_failure_data(samp::Sampling)
     return plot_df
 end
 
-function run_simulation(sim::Simulation; n_cpus=2)
+function run_simulation(sim::Simulation; n_cpus=4)
     create_job(sim, n_cpus)
     cd(joinpath("simulations",sim.name))
     run(`qsub job.sh`)
@@ -308,7 +308,7 @@ function run_simulation(sim::Simulation; n_cpus=2)
     return nothing
 end
 
-function run_simulation(samp::Sampling, n::Int64; random=true)
+function run_simulation(samp::Sampling, n::Int64; random=true, n_cpus=4)
     simulations = filter_simulations(samp, 1)
     rand_pool = filter_simulations(samp, 1)
     if random
@@ -319,7 +319,7 @@ function run_simulation(samp::Sampling, n::Int64; random=true)
             delete!(rand_pool, new_sim)
         end
         for s in simulations_to_run
-            run_simulation(simulations[s])
+            run_simulation(simulations[s]; n_cpus=n_cpus)
             samp.simulations[s].status = 2
         end
     end
