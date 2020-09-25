@@ -103,11 +103,13 @@ mutable struct Sampling
     path::AbstractString
     area::Array{Number}
     max_ID::Int64
+    name_template::String
     
     function Sampling(path::AbstractString, template_path::AbstractString)
         simulations = Dict{String,Simulation}()
         cd(path)
         sampling_path = pwd()
+        name_template = join(split(splitpath(template_path), '-')[1:end-1], '-')
         if "dimensions.dat" in readdir(joinpath(path, "model_data"))
             dim = JSON.parsefile(joinpath(path,"model_data","dimensions.dat"))
             if "area.dat" in readdir(joinpath(path,"model_data"))
@@ -141,7 +143,7 @@ mutable struct Sampling
             return parse(Int64, split(sn,'-')[end])
         end
         max_ID = maximum(IDs)
-        return new(simulations, sampling_path, area, max_ID)
+        return new(simulations, sampling_path, area, max_ID, name_template)
     end
 end
 
