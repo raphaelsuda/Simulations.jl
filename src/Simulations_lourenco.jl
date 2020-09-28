@@ -156,7 +156,7 @@ function optimize_lourenco(samp::Sampling, optimizer::Optim.AbstractOptimizer; s
 	println("    f_γ = $(round(f_γ,digits=3)) MPa")
 	println("  ----------------------")
 	println("    CoD = $(round(CoD,digits=3))")
-	open(joinpath(samp.path, model_data, "lourenco_parameters_optim.dat"),"w") do f
+	open(joinpath(samp.path, "model_data", "lourenco_parameters_optim.dat"),"w") do f
 		JSON.print(f,lourenco_parameters_optim)
 	end
 	return nothing
