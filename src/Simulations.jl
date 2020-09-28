@@ -316,6 +316,7 @@ function collect_failure_data(samp::Sampling)
                      :sig_xx_nonlin => sig_xx_nonlin,
                      :sig_zz_nonlin => sig_zz_nonlin,
                      :sig_xz_nonlin => sig_xz_nonlin)
+    sort!(plot_df, :simulation)
     CSV.write("plot_failure_data.dat", plot_df)
     return plot_df
 end
