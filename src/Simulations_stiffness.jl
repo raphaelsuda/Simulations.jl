@@ -1,3 +1,69 @@
+# waits the given time and prints a countdown
+function countdown(t)
+	for i in t:-1:1
+		print("$(i) ... ")
+		sleep(1)
+	end
+	print("0\n")
+end
+# regular expression for finding numbers in input file
+const num_re = r"-?\d+\.\d*(e-?\d+)?"
+# function for deleting properties in input file
+function delete_property!(file::StringArrayEditor.File,keyword::Regex)
+	# find lines containing the given keyword
+	lines = Lines(file,keyword)
+	for l in lines
+		# find range containing all data entries of the property
+		range = Range(file,from=num_re,until=num_re,after=l)
+		# delete data entries
+		delete!(range)
+		# delete keyword line
+		delete!(l)
+	end
+end
+
+# checks if last line of sta-file says that analysis has been completed
+function check_sta(file::String)
+	# if there is no sta-file, calculation has not started
+	if isempty(readlines(file))
+		return false
+	# if there is a sta-file, calculation has already started
+	# if the last line doesn't contain "THE ANALYSIS HAS COMPLETED SUCCESSFULLY"
+	# the calculation is still running
+	elseif match(r"THE ANALYSIS HAS COMPLETED SUCCESSFULLY",readlines(file)[end]) == nothing
+		return false
+	# the remaining case is fulfilled if there is a file and the last line requirement holds
+	else
+		return true
+	end
+end
+
+# checks if last line of any sta-file in the directory says that analysis has been completed
+function check_sta()
+	# list of files
+	files = readdir()
+	# list of sta-files
+	stas = files[match.(r"\.sta",files).!=nothing]
+	# if list of sta-files is empty, calculation hase probably not started yet
+	# else evaluate the status of all sta-files and return their product
+	if isempty(stas)
+		return false
+	else
+		return prod(check_sta.(stas))
+	end
+end
+
+
+# reads maximum reaction force from abaqus report
+function read_rf(file)
+	# read given file
+	data = readlines(file)
+	# extract fifth line containing the wanted reaction force and split the line
+	num = split(data[5])
+	# return the reaction force as float number
+	return parse(Float64,num[2])
+end
+
 function create_elastic_template(samp::Sampling)
     file_elas = joinpath(samp.path, "templates", "$(samp.name_template)-Elastic.inp")
     if isfile(file_elas)
