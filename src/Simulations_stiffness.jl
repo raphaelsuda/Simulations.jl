@@ -171,6 +171,7 @@ function compute_stiffness(samp::Sampling)
         end
     end
     @info "All calculations finished!"
+    countdown(20)
     cd("..")
 
     # read reaction forces from odb files
