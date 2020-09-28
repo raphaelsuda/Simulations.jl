@@ -8,6 +8,7 @@ using Formatting
 using JSON
 using Optim
 using Statistics
+using StringArrayEditor
 using Plots
 
 import Base.show
@@ -102,8 +103,10 @@ end
 mutable struct Sampling
     simulations::Dict{String,Simulation}
     path::AbstractString
+    dim::Array{Number}
     area::Array{Number}
     max_ID::Int64
+    template_path::Abstract
     name_template::String
     
     function Sampling(path::AbstractString, template_path::AbstractString)
@@ -144,7 +147,7 @@ mutable struct Sampling
             return parse(Int64, split(sn,'-')[end])
         end
         max_ID = maximum(IDs)
-        return new(simulations, sampling_path, area, max_ID, name_template)
+        return new(simulations, sampling_path, dim, area, max_ID, joinpath(sampling_path, template_path), name_template)
     end
 end
 
@@ -282,6 +285,28 @@ function create_job(sim::Simulation, n_cpus::Int64)
                  "echo \"running job \$JOB_ID on \$HOSTNAME\"",
                  "abq2019 job=$(sim.name) scratch=\"/scratch/tmp\" cpus=$(n_cpus) mp_mode=threads input=$(sim.name).inp interactive"]
     open("simulations/$(sim.name)/job.sh","w") do job
+        for i in 1:length(job_lines)
+            println(job,job_lines[i])
+        end
+    end
+    return nothing
+end
+
+function create_job(sim_name::String, n_cpus::Int64; simulation_folder="simulations")
+    job_lines = ["#!/bin/bash",
+                 "#\$ -cwd",
+                 "#\$ -N $(sim_name)",
+                 "#\$ -V",
+                 "#\$ -pe openmpi_fill $(n_cpus)",
+                 "#\$ -q nodes.q",
+                 "#\$ -l h_rt=48:00:00",
+                 "#\$ -M raphael.suda@tuwien.ac.at",
+                 "#\$ -m beas",
+                 "",
+                 "echo `date`",
+                 "echo \"running job \$JOB_ID on \$HOSTNAME\"",
+                 "abq2019 job=$(sim_name) scratch=\"/scratch/tmp\" cpus=$(n_cpus) mp_mode=threads input=$(sim_name).inp interactive"]
+    open(joinpath(simulation_folder, sim_name, "job.sh"),"w") do job
         for i in 1:length(job_lines)
             println(job,job_lines[i])
         end

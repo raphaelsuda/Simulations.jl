@@ -34,7 +34,8 @@ folders which should be existing or created when initiating a Sampling
 const folder_structure = ["figures",
                           "model_data",
                           "simulations",
-                          "templates"]
+                          "templates",
+                          "stiffness_simulations"]
 
 const abaqus_report_files = ["RF11.rpt",
                              "RF33.rpt",
@@ -52,3 +53,10 @@ const stress_strain = Dict("sig_11" => 1,
 
 
 const stress_indices = ["sig_11", "sig_33", "sig_13"]
+
+const eff_strains_homo = Dict("eps33-t"=>(1.0,0.0,0.0),
+				              "eps22-t"=>(0.0, 1.0, 0.0),
+				              "eps23-t"=>(0.0, 0.0, 1.0),
+				              "eps33-c"=>(-1.0, 0.0, 0.0),
+				              "eps22-c"=>(0.0, -1.0, 0.0),
+				              "eps23-c"=>(0.0, 0.0, -1.0))
