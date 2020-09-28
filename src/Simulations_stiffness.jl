@@ -182,6 +182,7 @@ function compute_stiffness(samp::Sampling)
         isdir("abaqus_reports") ? nothing : mkdir("abaqus_reports")
         # run abaqus and execute python script
         run(`abq2019 cae noGUI=reaction_forces.py`)
+        cd("..")
     end
     cd("..")
 
