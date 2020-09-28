@@ -106,7 +106,7 @@ mutable struct Sampling
     dim::Array{Number}
     area::Array{Number}
     max_ID::Int64
-    template_path::Abstract
+    template_path::AbstractString
     name_template::String
     
     function Sampling(path::AbstractString, template_path::AbstractString)
