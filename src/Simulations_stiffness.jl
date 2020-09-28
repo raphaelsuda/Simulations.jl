@@ -133,7 +133,7 @@ function compute_stiffness(samp::Sampling)
     elastic_simulations = Dict{String,Simulation}()
     for lc in loadcases
         simulation_names[lc] = "$(samp.name_template)-Elastic-$(filenames[lc])"
-        strains = eff_strains_homo[lc] .* 0.1
+        strains = eff_strains_homo[lc] .* 0.01
         elastic_simulations[simulation_names[lc]] = Simulation(1, simulation_names[lc], 999, 0.0, 0.0, strains, false, (0.0, 0.0, 0.0), 0, (0.0, 0.0, 0.0), 0)
     end
     for lc in loadcases
@@ -176,11 +176,10 @@ function compute_stiffness(samp::Sampling)
     # read reaction forces from odb files
     cd("stiffness_simulations")
     for d in readdir()
+        reaction_forces_template(elastic_simulations[d],simulation_folder="")
         cd(d)
         # create directory reaction_forces if not existing
         isdir("abaqus_reports") ? nothing : mkdir("abaqus_reports")
-        # copy template of python file and insert file name
-        reaction_forces_template(elastic_simulations[d],simulation_folder="stiffness_simulations")
         # run abaqus and execute python script
         run(`abq2019 cae noGUI=reaction_forces.py`)
     end
