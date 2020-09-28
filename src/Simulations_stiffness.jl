@@ -90,7 +90,6 @@ end
 
 # function for generating model
 function generate_elastic_model(temp_path,save_path,eps_xx,eps_zz,eps_xz)
-    @info "Generating $(simulation_name)"
     # load elastic input template as AbqModel
     inp = AbqModel(temp_path)
     # set unit cell to twodimensional periodicity
@@ -130,33 +129,62 @@ function compute_stiffness(samp::Sampling)
     filenames = Dict("eps33-t"=>"Tension-XX","eps22-t"=>"Tension-ZZ","eps23-t"=>"Tension-XZ","eps33-c"=>"Compression-XX","eps22-c"=>"Compression-ZZ","eps23-c"=>"Compression-XZ")
     # initialize status dictionary for calculation of the loadcases
     calc_stat = Dict("eps33-t"=>false,"eps22-t"=>false,"eps23-t"=>false,"eps33-c"=>false,"eps22-c"=>false,"eps23-c"=>false)
+    simulation_names = Dict{String,String}()
+    elastic_simulations = Dict{String,Simulation}()
     for lc in loadcases
-        simulation_name = "$(samp.name_template)-Elastic-$(filenames[lc])"
+        simulation_names[lc] = "$(samp.name_template)-Elastic-$(filenames[lc])"
+        strains = eff_strains_homo[lc] .* 0.1
+        elastic_simulations[simulation_names[lc]] = Simulation(1, simulation_names[lc], 999, 0.0, 0.0, strains, false, (0.0, 0.0, 0.0), 0, (0.0, 0.0, 0.0), 0)
+    end
+    for lc in loadcases
+        simulation_name = simulation_names[lc]
         # path of the directory
         dirname = joinpath(samp.path,"stiffness_simulations",simulation_name)
         # path of the input file
         simulation_path = joinpath("$(dirname)","$(simulation_name).inp")
         # create directory models if it doesn't exist
         isdir(dirname) ? nothing : mkdir(dirname)
-        # check if input file exists
-        if isfile(simulation_path)
-            @info "File $(simulation_name) exists"
-        else
-            strains = eff_strains_homo[lc]
-            generate_elastic_model(elas_path, simulation_path, strains[1], strains[2], strains[3])
-        end
-        # check if odb file exists (calculation already done
-        if isfile(joinpath(dirname,"$(simulation_name).odb"))
-            @info "Results for $(simulation_name) exist"
-            calc_stat[lc] = true
-        else
-            # check if bash file for submitting job is existing
-            if isfile(joinpath(dirname,"job.sh"))
-                @info "Job file exists"
-            else
-                @info "Generating job file"
-                create_job(simulation_name, 4, simulation_folder="stiffness_simulations")
-            end
+        strains = elastic_simulations[simulation_name].eps_fin
+        generate_elastic_model(elas_path, simulation_path, strains[1], strains[2], strains[3])
+        create_job(simulation_name, 4, simulation_folder="stiffness_simulations")
+        @info "Starting evaluation of $(simulation_name)"
+        # submit job file            
+        cd(dirname)
+        run(`qsub job.sh`)
+        cd(samp.path)
+    end
+    # check if results aready existed before file execution
+    # 20 second sleep timer for waiting until existing sta files are deleted
+    countdown(20)
+    # if calculation is requested, check the sta files every 5 seconds
+    cd("stiffness_simulations")
+    status = false
+    # as long as sta files dont say, that the calculation has been completed,
+    # wait 5 seconds and check again
+    while !status
+        sleep(5)
+        for d in readdir()
+            status = true
+            cd(d)
+            status *= check_sta()
+            cd("..")
         end
     end
+    @info "All calculations finished!"
+    cd("..")
+
+    # read reaction forces from odb files
+    cd("stiffness_simulations")
+    for d in readdir()
+        cd(d)
+        # create directory reaction_forces if not existing
+        isdir("abaqus_reports") ? nothing : mkdir("abaqus_reports")
+        # copy template of python file and insert file name
+        reaction_forces_template(elastic_simulations[d],simulation_folder="stiffness_simulations")
+        # run abaqus and execute python script
+        run(`abq2019 cae noGUI=reaction_forces.py`)
+    end
+    cd("..")
+
+
 end

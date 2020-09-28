@@ -1,4 +1,4 @@
-function reaction_forces_template(sim::Simulation)
+function reaction_forces_template(sim::Simulation; simulation_folder="simulations")
     lines = ["from abaqus import *",
     "from abaqusConstants import *",
     "session.Viewport(name='Viewport: 1', origin=(0.0, 0.0), width=268.952117919922,",
@@ -60,7 +60,7 @@ function reaction_forces_template(sim::Simulation)
     "x0 = session.xyDataObjects['RF31']",
     "session.writeXYReport(fileName='abaqus_reports/RF31.rpt', appendMode=OFF, xyData=(x0, ",
     "    ))"]
-    python_file_path = joinpath("simulations",sim.name,"reaction_forces.py")
+    python_file_path = joinpath(simulation_folder,sim.name,"reaction_forces.py")
     open(python_file_path,"w") do pf
         for l in lines
             println(pf,l)
