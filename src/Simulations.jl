@@ -154,7 +154,7 @@ mutable struct Sampling
             simulations[f] = Simulation(f)
         end
         if isempty(readdir("simulations"))
-            maxID = 0
+            max_ID = 0
         else
             IDs = map(collect(keys(simulations))) do sn
                 return parse(Int64, split(sn,'-')[end])
