@@ -132,7 +132,7 @@ end
 
 function remove_elastic_models(samp::Sampling; keep_types=[])
     cd(joinpath(samp.path, "stiffness_simulations"))
-    for d in reddir()
+    for d in readdir()
         cd(d)
         for f in readdir()
             if isdir(f)
