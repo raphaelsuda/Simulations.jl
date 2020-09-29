@@ -152,7 +152,7 @@ function remove_elastic_models(samp::Sampling; keep_types=[])
     cd("..")
 end
 
-function compute_stiffness(samp::Sampling; keep_types=[], cd=20)
+function compute_stiffness(samp::Sampling; keep_types=[], t_cd=20)
     elas_path = create_elastic_template(samp)
     # loadcases to be calculated
     loadcases = ["eps33-t","eps22-t","eps23-t","eps33-c","eps22-c","eps23-c"]
@@ -202,7 +202,7 @@ function compute_stiffness(samp::Sampling; keep_types=[], cd=20)
         end
     end
     @info "All calculations finished!"
-    countdown(cd)
+    countdown(t_cd)
     cd("..")
 
     # read reaction forces from odb files
