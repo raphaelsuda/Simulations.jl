@@ -139,6 +139,7 @@ mutable struct Sampling
             end
         else
             inp = AbqModel(template_path)
+            dim = inp.dim
             area = zeros(3)
             area[1] = inp.dim[2] * inp.dim[3]
             area[2] = inp.dim[1] * inp.dim[3]
