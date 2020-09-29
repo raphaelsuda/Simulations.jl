@@ -100,6 +100,15 @@ function show(io::IO, sim::Simulation)
     print(io, "Simulation($(sim.name) --> $(status[sim.status]), plot_status=$(sim.plot_status))")
 end
 
+function initiate_sampling(path::AbstractString)
+    cd(path)
+    @info "Initiating sampling project in $(pwd())"
+    for f in folder_structure
+        isdir(f) ? nothing : mkdir(f)
+    end
+    return nothing
+end
+
 mutable struct Sampling
     simulations::Dict{String,Simulation}
     path::AbstractString
@@ -113,6 +122,7 @@ mutable struct Sampling
         simulations = Dict{String,Simulation}()
         cd(path)
         sampling_path = pwd()
+        initiate_sampling(sampling_path)
         name_template = join(split(splitpath(template_path)[end], '-')[1:end-1], '-')
         if "dimensions.dat" in readdir(joinpath(path, "model_data"))
             dim = JSON.parsefile(joinpath(path,"model_data","dimensions.dat"))
@@ -184,14 +194,6 @@ function set_plot_status(samp::Sampling, sim_names::Array{String,1}, plot_st::Bo
     return plot_st
 end
 
-function initiate_sampling(path::AbstractString)
-    cd(path)
-    @info "Initiating sampling project in $(pwd())"
-    for f in folder_structure
-        isdir(f) ? nothing : mkdir(f)
-    end
-    return nothing
-end
 
 function filter_simulations(simulations::Dict{String,Simulation}, st::Int)
     filtered_simulations = Dict{String,Simulation}()
