@@ -121,7 +121,37 @@ function generate_elastic_model(temp_path,save_path,eps_xx,eps_zz,eps_xz)
     saveInp(inp,save_path)
 end
 
-function compute_stiffness(samp::Sampling)
+function file_ending(path::AbstractString)
+    split_string = split(path, '.')
+    if length(split_string) == 1
+        return ""
+    else
+        return split_string[end]
+    end
+end
+
+function remove_elastic_models(samp::Sampling; keep_types=[])
+    cd(joinpath(samp.path, "stiffness_simulations"))
+    for d in reddir()
+        cd(d)
+        for f in readdir()
+            if isdir(f)
+                cd(f)
+                for ff in readdir()
+                    file_ending(ff) in keep_types ? nothing : rm(ff)
+                end
+                cd("..")
+                isempty(readdir(f)) ? rm(f) : nothing
+            end
+            file_ending(f) in keep_types ? nothing : rm(f)
+        end
+        cd("..")
+        isempty(readdir(d)) ? rm(d) : nothing
+    end
+    cd("..")
+end
+
+function compute_stiffness(samp::Sampling; keep_types=[])
     elas_path = create_elastic_template(samp)
     # loadcases to be calculated
     loadcases = ["eps33-t","eps22-t","eps23-t","eps33-c","eps22-c","eps23-c"]
@@ -186,6 +216,50 @@ function compute_stiffness(samp::Sampling)
         cd("..")
     end
     cd("..")
+    # read reaction forces
+    @info "Reading reaction forces"
+    # define line numbers in reaction force array for loadcases
+    linenum = Dict("eps33-t"=>1,"eps22-t"=>2,"eps23-t"=>3,"eps33-c"=>4,"eps22-c"=>5,"eps23-c"=>6)
+    # initialize reaction force array
+    reaction_forces = zeros(6,4)
+    cd("stiffness_simulations")
+    # read reaction forces from reports for each loadcase
+    for lc in loadcases
+        name = simulation_names[lc]
+        cd(name)
+        cd("abaqus_reports")
+        n = linenum[lc]
+        reaction_forces[n,1] = read_rf("RF11.RF")
+        reaction_forces[n,2] = read_rf("RF33.RF")
+        reaction_forces[n,3] = read_rf("RF13.RF")
+        reaction_forces[n,4] = read_rf("RF31.RF")
+        cd("..")
+        cd("..")
+    end
+    # caculate the components of the effective stiffness matrix
+    st_1111_t = reaction_forces[1,1]/(area[1]*elastic_simulations[simulation_names["eps33-t"]].eps_fin[1]) 
+    st_1122_t = reaction_forces[2,1]/(area[1]*elastic_simulations[simulation_names["eps22-t"]].eps_fin[2]) 
+    st_2211_t = reaction_forces[1,2]/(area[3]*elastic_simulations[simulation_names["eps33-t"]].eps_fin[1]) 
+    st_2222_t = reaction_forces[2,2]/(area[3]*elastic_simulations[simulation_names["eps22-t"]].eps_fin[2]) 
+    st_1212_t = 1/(2 * elastic_simulations[simulation_names["eps23-t"]].eps_fin[3]) * (reaction_forces[3,3]/area[1] + reaction_forces[3,4]/area[3])
+    st_1111_c = reaction_forces[4,1]/(area[1]*elastic_simulations[simulation_names["eps33-c"]].eps_fin[1]) 
+    st_1122_c = reaction_forces[5,1]/(area[1]*elastic_simulations[simulation_names["eps22-c"]].eps_fin[2]) 
+    st_2211_c = reaction_forces[4,2]/(area[3]*elastic_simulations[simulation_names["eps33-c"]].eps_fin[1]) 
+    st_2222_c = reaction_forces[5,2]/(area[3]*elastic_simulations[simulation_names["eps22-c"]].eps_fin[2]) 
+    st_1212_c = 1/(2 * elastic_simulations[simulation_names["eps23-c"]].eps_fin[3]) * (reaction_forces[6,3]/area[1] + reaction_forces[6,4]/area[3])
 
+    # assemble the effective stiffness matrix
+    stiffness_tension = [st_1111_t st_1122_t 0;
+                         st_2211_t st_2222_t 0;
+                         0 0 st_1212_t]
+    stiffness_compression = [st_1111_c st_1122_c 0;
+                             st_2211_c st_2222_c 0;
+                             0 0 st_1212_c]
 
+    # write effective stiffnesses to file
+    writedlm(joinpath(samp.path, "model_data", "stiffness_tension.dat"), stiffness_tension,';')
+    writedlm(joinpath(samp.path, "model_data", "stiffness_compression.dat"), stiffness_compression,';')
+
+    remove_elastic_models(s)
+    return stiffness_tension, stiffness_compression
 end
