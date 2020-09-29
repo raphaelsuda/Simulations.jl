@@ -237,16 +237,16 @@ function compute_stiffness(samp::Sampling; keep_types=[])
         cd("..")
     end
     # caculate the components of the effective stiffness matrix
-    st_1111_t = reaction_forces[1,1]/(area[1]*elastic_simulations[simulation_names["eps33-t"]].eps_fin[1]) 
-    st_1122_t = reaction_forces[2,1]/(area[1]*elastic_simulations[simulation_names["eps22-t"]].eps_fin[2]) 
-    st_2211_t = reaction_forces[1,2]/(area[3]*elastic_simulations[simulation_names["eps33-t"]].eps_fin[1]) 
-    st_2222_t = reaction_forces[2,2]/(area[3]*elastic_simulations[simulation_names["eps22-t"]].eps_fin[2]) 
-    st_1212_t = 1/(2 * elastic_simulations[simulation_names["eps23-t"]].eps_fin[3]) * (reaction_forces[3,3]/area[1] + reaction_forces[3,4]/area[3])
-    st_1111_c = reaction_forces[4,1]/(area[1]*elastic_simulations[simulation_names["eps33-c"]].eps_fin[1]) 
-    st_1122_c = reaction_forces[5,1]/(area[1]*elastic_simulations[simulation_names["eps22-c"]].eps_fin[2]) 
-    st_2211_c = reaction_forces[4,2]/(area[3]*elastic_simulations[simulation_names["eps33-c"]].eps_fin[1]) 
-    st_2222_c = reaction_forces[5,2]/(area[3]*elastic_simulations[simulation_names["eps22-c"]].eps_fin[2]) 
-    st_1212_c = 1/(2 * elastic_simulations[simulation_names["eps23-c"]].eps_fin[3]) * (reaction_forces[6,3]/area[1] + reaction_forces[6,4]/area[3])
+    st_1111_t = reaction_forces[1,1]/(samp.area[1]*elastic_simulations[simulation_names["eps33-t"]].eps_fin[1]) 
+    st_1122_t = reaction_forces[2,1]/(samp.area[1]*elastic_simulations[simulation_names["eps22-t"]].eps_fin[2]) 
+    st_2211_t = reaction_forces[1,2]/(samp.area[3]*elastic_simulations[simulation_names["eps33-t"]].eps_fin[1]) 
+    st_2222_t = reaction_forces[2,2]/(samp.area[3]*elastic_simulations[simulation_names["eps22-t"]].eps_fin[2]) 
+    st_1212_t = 1/(2 * elastic_simulations[simulation_names["eps23-t"]].eps_fin[3]) * (reaction_forces[3,3]/samp.area[1] + reaction_forces[3,4]/samp.area[3])
+    st_1111_c = reaction_forces[4,1]/(samp.area[1]*elastic_simulations[simulation_names["eps33-c"]].eps_fin[1]) 
+    st_1122_c = reaction_forces[5,1]/(samp.area[1]*elastic_simulations[simulation_names["eps22-c"]].eps_fin[2]) 
+    st_2211_c = reaction_forces[4,2]/(samp.area[3]*elastic_simulations[simulation_names["eps33-c"]].eps_fin[1]) 
+    st_2222_c = reaction_forces[5,2]/(samp.area[3]*elastic_simulations[simulation_names["eps22-c"]].eps_fin[2]) 
+    st_1212_c = 1/(2 * elastic_simulations[simulation_names["eps23-c"]].eps_fin[3]) * (reaction_forces[6,3]/samp.area[1] + reaction_forces[6,4]/samp.area[3])
 
     # assemble the effective stiffness matrix
     stiffness_tension = [st_1111_t st_1122_t 0;
