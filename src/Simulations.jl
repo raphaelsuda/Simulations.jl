@@ -153,10 +153,14 @@ mutable struct Sampling
         for f in readdir("simulations")
             simulations[f] = Simulation(f)
         end
-        IDs = map(collect(keys(simulations))) do sn
-            return parse(Int64, split(sn,'-')[end])
+        if isempty(readdir("simulations"))
+            maxID = 0
+        else
+            IDs = map(collect(keys(simulations))) do sn
+                return parse(Int64, split(sn,'-')[end])
+            end
+            max_ID = maximum(IDs)
         end
-        max_ID = maximum(IDs)
         return new(simulations, sampling_path, dim, area, max_ID, joinpath(sampling_path, template_path), name_template)
     end
 end
