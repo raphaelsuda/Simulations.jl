@@ -142,8 +142,9 @@ function remove_elastic_models(samp::Sampling; keep_types=[])
                 end
                 cd("..")
                 isempty(readdir(f)) ? rm(f) : nothing
+            else
+                file_ending(f) in keep_types ? nothing : rm(f)
             end
-            file_ending(f) in keep_types ? nothing : rm(f)
         end
         cd("..")
         isempty(readdir(d)) ? rm(d) : nothing
