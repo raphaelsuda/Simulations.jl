@@ -26,12 +26,12 @@ function calc_stresses(r,α,β)
 	return [σ_xx, σ_zz, τ_xz]
 end
 # function for generating model
-function generate_model(temp_path,save_path,eps_xx,eps_zz,eps_xz)
+function generate_model(temp_path,save_path,eps_xx,eps_zz,eps_xz;ecc=[])
 	## load AbqModel
 	# load file as AbqModel
 	inp = AbqModel(temp_path)
 	# set ecceptions for the mortar layer
-	setEcceptions!(inp,["M1-1-1","M1-2-1","M1-3-1","M1-4-1","M1-5-1","M1-6-1","M2-1-1","M2-2-1","M2-3-1","M2-4-1","M2-5-1","M2-6-1","MHJ-1-1","MHJ-2-1","MHJ-3-1"])
+	setEcceptions!(inp,ecc)
 	# set reference axis to y-direction
 	setRefAxis!(inp,"y")
 	# set twodimensional periodicity
