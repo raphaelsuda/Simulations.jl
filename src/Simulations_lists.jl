@@ -59,4 +59,9 @@ const eff_strains_homo = Dict("eps33-t"=>(1.0,0.0,0.0),
 				              "eps23-t"=>(0.0, 0.0, 1.0),
 				              "eps33-c"=>(-1.0, 0.0, 0.0),
 				              "eps22-c"=>(0.0, -1.0, 0.0),
-				              "eps23-c"=>(0.0, 0.0, -1.0))
+                              "eps23-c"=>(0.0, 0.0, -1.0))
+
+# loadcases to be calculated
+const elastic_loadcases = ["eps33-t","eps22-t","eps23-t","eps33-c","eps22-c","eps23-c"]
+# filename extensions for loadcases
+const elastic_filenames = Dict("eps33-t"=>"Tension-XX","eps22-t"=>"Tension-ZZ","eps23-t"=>"Tension-XZ","eps33-c"=>"Compression-XX","eps22-c"=>"Compression-ZZ","eps23-c"=>"Compression-XZ")

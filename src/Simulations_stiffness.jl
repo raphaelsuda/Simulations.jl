@@ -152,22 +152,24 @@ function remove_elastic_models(samp::Sampling; keep_types=[])
     cd("..")
 end
 
-function compute_stiffness(samp::Sampling; keep_types=[], t_cd=20)
-    elas_path = create_elastic_template(samp)
-    # loadcases to be calculated
-    loadcases = ["eps33-t","eps22-t","eps23-t","eps33-c","eps22-c","eps23-c"]
-    # filename extensions for loadcases
-    filenames = Dict("eps33-t"=>"Tension-XX","eps22-t"=>"Tension-ZZ","eps23-t"=>"Tension-XZ","eps33-c"=>"Compression-XX","eps22-c"=>"Compression-ZZ","eps23-c"=>"Compression-XZ")
-    # initialize status dictionary for calculation of the loadcases
-    calc_stat = Dict("eps33-t"=>false,"eps22-t"=>false,"eps23-t"=>false,"eps33-c"=>false,"eps22-c"=>false,"eps23-c"=>false)
+function get_elastic_names(samp::Sampling)
     simulation_names = Dict{String,String}()
     elastic_simulations = Dict{String,Simulation}()
-    for lc in loadcases
-        simulation_names[lc] = "$(samp.name_template)-Elastic-$(filenames[lc])"
+    for lc in elastic_loadcases
+        simulation_names[lc] = "$(samp.name_template)-Elastic-$(elastic_filenames[lc])"
         strains = eff_strains_homo[lc] .* 0.01
         elastic_simulations[simulation_names[lc]] = Simulation(1, simulation_names[lc], 999, 0.0, 0.0, strains, false, (0.0, 0.0, 0.0), 0, (0.0, 0.0, 0.0), 0)
     end
-    for lc in loadcases
+    return simulation_names, elastic_simulations
+end
+
+
+function compute_stiffness(samp::Sampling; keep_types=[], t_cd=20)
+    elas_path = create_elastic_template(samp)
+    # initialize status dictionary for calculation of the loadcases
+    calc_stat = Dict("eps33-t"=>false,"eps22-t"=>false,"eps23-t"=>false,"eps33-c"=>false,"eps22-c"=>false,"eps23-c"=>false)
+    simulation_names, elastic_simulations = get_elastic_names(samp)
+    for lc in elastic_loadcases
         simulation_name = simulation_names[lc]
         # path of the directory
         dirname = joinpath(samp.path,"stiffness_simulations",simulation_name)
@@ -202,9 +204,12 @@ function compute_stiffness(samp::Sampling; keep_types=[], t_cd=20)
         end
     end
     @info "All calculations finished!"
-    countdown(t_cd)
     cd("..")
+    return nothing
+end
 
+function evaluate_stiffness(samp::Sampling)
+    simulation_names, elastic_simulations = get_elastic_names(samp)
     # read reaction forces from odb files
     cd("stiffness_simulations")
     for d in readdir()
@@ -225,7 +230,7 @@ function compute_stiffness(samp::Sampling; keep_types=[], t_cd=20)
     reaction_forces = zeros(6,4)
     cd("stiffness_simulations")
     # read reaction forces from reports for each loadcase
-    for lc in loadcases
+    for lc in elastic_loadcases
         name = simulation_names[lc]
         cd(name)
         cd("abaqus_reports")
