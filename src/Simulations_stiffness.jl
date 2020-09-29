@@ -260,6 +260,6 @@ function compute_stiffness(samp::Sampling; keep_types=[])
     writedlm(joinpath(samp.path, "model_data", "stiffness_tension.dat"), stiffness_tension,';')
     writedlm(joinpath(samp.path, "model_data", "stiffness_compression.dat"), stiffness_compression,';')
 
-    remove_elastic_models(s)
+    remove_elastic_models(samp)
     return stiffness_tension, stiffness_compression
 end
