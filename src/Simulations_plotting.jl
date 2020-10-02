@@ -63,8 +63,8 @@ end
 
 function contour_lourenco(samp::Sampling,xlims::Tuple{Number,Number},ylims::Tuple{Number,Number}; parameter_file="lourenco_parameters_optim.dat", save_plot=false, file="contour_lourenco.pdf")
     parameters = JSON.parsefile(joinpath(samp.path,"model_data",parameter_file))
-    x = xlims[1]:0.1:xlims[2]
-    y = ylims[1]:0.1:ylims[2]
+    x = xlims[1]:0.01:xlims[2]
+    y = ylims[1]:0.01:ylims[2]
     n_x = length(x)
     n_y = length(y)
     τ = zeros(n_y,n_x)
@@ -81,8 +81,8 @@ function contour_lourenco(samp::Sampling,xlims::Tuple{Number,Number},ylims::Tupl
 end
 
 function contour_lourenco(samp::Sampling,xlims::Tuple{Number,Number},ylims::Tuple{Number,Number}, l::Lourenco; save_plot=false, file="contour_lourenco.pdf")
-    x = xlims[1]:0.1:xlims[2]
-    y = ylims[1]:0.1:ylims[2]
+    x = xlims[1]:0.01:xlims[2]
+    y = ylims[1]:0.01:ylims[2]
     n_x = length(x)
     n_y = length(y)
     τ = zeros(n_y,n_x)
@@ -100,8 +100,8 @@ end
 
 function contour_lourenco!(p::Plots.Plot,samp::Sampling,xlims::Tuple{Number,Number},ylims::Tuple{Number,Number}; parameter_file="lourenco_parameters_optim.dat", save_plot=false, file="contour_lourenco.pdf")
     parameters = JSON.parsefile(joinpath(samp.path,"model_data",parameter_file))
-    x = xlims[1]:0.1:xlims[2]
-    y = ylims[1]:0.1:ylims[2]
+    x = xlims[1]:0.01:xlims[2]
+    y = ylims[1]:0.01:ylims[2]
     n_x = length(x)
     n_y = length(y)
     τ = zeros(n_y,n_x)
@@ -116,8 +116,8 @@ function contour_lourenco!(p::Plots.Plot,samp::Sampling,xlims::Tuple{Number,Numb
 end
 
 function contour_lourenco!(p::Plots.Plot,samp::Sampling,xlims::Tuple{Number,Number},ylims::Tuple{Number,Number}, l::Lourenco; save_plot=false, file="contour_lourenco.pdf")
-    x = xlims[1]:0.1:xlims[2]
-    y = ylims[1]:0.1:ylims[2]
+    x = xlims[1]:0.01:xlims[2]
+    y = ylims[1]:0.01:ylims[2]
     n_x = length(x)
     n_y = length(y)
     τ = zeros(n_y,n_x)
@@ -126,7 +126,7 @@ function contour_lourenco!(p::Plots.Plot,samp::Sampling,xlims::Tuple{Number,Numb
             τ[i,j] = τ_lourenco(x[j],y[i], l)
         end
     end
-    save_plot || file != "contour_lourenco.pdf" ? savefig(c,joinpath("figures",file)) : nothing
     contour!(p,x,y,τ,color=:heat)
+    save_plot || file != "contour_lourenco.pdf" ? savefig(p,joinpath("figures",file)) : nothing
     return p
 end
