@@ -131,7 +131,7 @@ function τ_sum(σ_x::Array{Float64}, σ_z::Array{Float64}, τ::Array{Float64}, 
 	return sum(diff.^2)
 end
 
-function optimize_lourenco(samp::Sampling, optimizer::Optim.AbstractOptimizer; start_values=[0.0,0.0,0.0,0.0,0.0,0.0,0.0])
+function optimize_lourenco(samp::Sampling, optimizer::Optim.AbstractOptimizer; start_values=[0.0,0.0,0.0,0.0,0.0,0.0,0.0], file_name="lourenco_parameters_optim.dat")
 	df = CSV.read(joinpath(samp.path,"plot_failure_data.dat"))
 	σ_x_models = collect(df[!,:sig_xx_nonlin])
 	σ_z_models = collect(df[!,:sig_zz_nonlin])
@@ -156,7 +156,42 @@ function optimize_lourenco(samp::Sampling, optimizer::Optim.AbstractOptimizer; s
 	println("    f_γ = $(round(f_γ,digits=3)) MPa")
 	println("  ----------------------")
 	println("    CoD = $(round(CoD,digits=3))")
-	open(joinpath(samp.path, "model_data", "lourenco_parameters_optim.dat"),"w") do f
+	open(joinpath(samp.path, "model_data", file_name),"w") do f
+		JSON.print(f,lourenco_parameters_optim)
+	end
+	return nothing
+end
+
+function optimize_lourenco(samp::Sampling, optimizer::Optim.AbstractOptimizer, uniaxial_strengths::Dict{String,Number}; start_values=[0.0,0.0,0.0], file_name="lourenco_parameters_optim.dat")
+	df = CSV.read(joinpath(samp.path,"plot_failure_data.dat"))
+	σ_x_models = collect(df[!,:sig_xx_nonlin])
+	σ_z_models = collect(df[!,:sig_zz_nonlin])
+	τ_models = collect(df[!,:sig_xz_nonlin])
+	n_models = length(τ_models)
+	f_tx = uniaxial_strengths["f_tx"]
+	f_tz = uniaxial_strengths["f_tz"]
+	f_mx = uniaxial_strengths["f_mx"]
+	f_mz = uniaxial_strengths["f_mz"]
+	f(x) = τ_sum(σ_x_models, σ_z_models, τ_models, Lourenco(f_tx, f_tz, f_mx, f_mz, x[5], x[6], x[7]))
+	res = optimize(f, start_values, optimizer)
+	results = Optim.minimizer(res)
+	τ_mean = mean(τ_models)
+	SS_tot = sum((τ_models[i] - τ_mean)^2 for i in 1:n_models)
+	SS_res = Optim.minimum(res)
+	CoD = 1 - SS_res/SS_tot
+	f_α, f_β, f_γ = results[1], results[2], results[3]
+	lourenco_parameters_optim = Dict("f_tx" => results[1],"f_tz" => results[2],"f_mx" => results[3],"f_mz" => results[4],"f_α" => results[5],"f_β" => results[6],"f_γ" => results[7])
+	@info "Solution candidate:"
+	println("   f_tx = $(round(f_tx,digits=3)) MPa")
+	println("   f_tz = $(round(f_tz,digits=3)) MPa")
+	println("   f_mx = $(round(f_mx,digits=3)) MPa")
+	println("   f_mz = $(round(f_mz,digits=3)) MPa")
+	println("    f_α = $(round(f_α,digits=3)) MPa")
+	println("    f_β = $(round(f_β,digits=3)) MPa")
+	println("    f_γ = $(round(f_γ,digits=3)) MPa")
+	println("  ----------------------")
+	println("    CoD = $(round(CoD,digits=3))")
+	open(joinpath(samp.path, "model_data", file_name),"w") do f
 		JSON.print(f,lourenco_parameters_optim)
 	end
 	return nothing
