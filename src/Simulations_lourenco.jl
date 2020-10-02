@@ -180,7 +180,7 @@ function optimize_lourenco(samp::Sampling, optimizer::Optim.AbstractOptimizer, u
 	SS_res = Optim.minimum(res)
 	CoD = 1 - SS_res/SS_tot
 	f_α, f_β, f_γ = results[1], results[2], results[3]
-	lourenco_parameters_optim = Dict("f_tx" => results[1],"f_tz" => results[2],"f_mx" => results[3],"f_mz" => results[4],"f_α" => results[5],"f_β" => results[6],"f_γ" => results[7])
+	lourenco_parameters_optim = Dict("f_tx" => f_tx,"f_tz" => f_tz,"f_mx" => f_mx,"f_mz" => f_mz,"f_α" => results[1],"f_β" => results[2],"f_γ" => results[3])
 	@info "Solution candidate:"
 	println("   f_tx = $(round(f_tx,digits=3)) MPa")
 	println("   f_tz = $(round(f_tz,digits=3)) MPa")
