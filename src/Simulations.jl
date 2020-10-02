@@ -24,7 +24,8 @@ export Sampling,
        scatter_sampling,
        scatter_sampling!,
        contour_lourenco,
-       contour_lourenco!
+       contour_lourenco!,
+       optimize_lourenco
 
 include("Simulations_lists.jl")
 
