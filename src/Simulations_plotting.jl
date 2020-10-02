@@ -110,7 +110,7 @@ function contour_lourenco!(p::Plots.Plot,samp::Sampling,xlims::Tuple{Number,Numb
             τ[i,j] = τ_lourenco(x[j],y[i],Lourenco(parameters["f_tx"], parameters["f_tz"], parameters["f_mx"], parameters["f_mz"], parameters["f_α"], parameters["f_β"], parameters["f_γ"]))
         end
     end
-    save_plot || file != "contour_lourenco.pdf" ? savefig(c,joinpath("figures",file)) : nothing
+    save_plot || file != "contour_lourenco.pdf" ? savefig(p,joinpath("figures",file)) : nothing
     contour!(p,x,y,τ,color=:heat)
     return p
 end
