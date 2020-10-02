@@ -61,8 +61,8 @@ function plot_history(samp::Sampling; title="", save_plot=false, file="stresses_
     return p
 end
 
-function contour_lourenco(samp::Sampling,xlims::Tuple{Number,Number},ylims::Tuple{Number,Number}; save_plot=false, file="contour_lourenco.pdf")
-    parameters = JSON.parsefile(joinpath(samp.path,"model_data","lourenco_parameters_optim.dat"))
+function contour_lourenco(samp::Sampling,xlims::Tuple{Number,Number},ylims::Tuple{Number,Number}; parameter_file="lourenco_parameters_optim.dat", save_plot=false, file="contour_lourenco.pdf")
+    parameters = JSON.parsefile(joinpath(samp.path,"model_data",parameter_file))
     x = xlims[1]:0.1:xlims[2]
     y = ylims[1]:0.1:ylims[2]
     n_x = length(x)
@@ -80,8 +80,26 @@ function contour_lourenco(samp::Sampling,xlims::Tuple{Number,Number},ylims::Tupl
     return c
 end
 
-function contour_lourenco!(p::Plots.Plot,samp::Sampling,xlims::Tuple{Number,Number},ylims::Tuple{Number,Number}; save_plot=false, file="contour_lourenco.pdf")
-    parameters = JSON.parsefile(joinpath(samp.path,"model_data","lourenco_parameters_optim.dat"))
+function contour_lourenco(samp::Sampling,xlims::Tuple{Number,Number},ylims::Tuple{Number,Number}, l::Lourenco; save_plot=false, file="contour_lourenco.pdf")
+    x = xlims[1]:0.1:xlims[2]
+    y = ylims[1]:0.1:ylims[2]
+    n_x = length(x)
+    n_y = length(y)
+    τ = zeros(n_y,n_x)
+    for i in 1:n_y
+        for j in 1:n_x
+            τ[i,j] = τ_lourenco(x[j],y[i], l)
+        end
+    end
+    c = contour(x,y,τ,color=:heat)
+    xlabel!(c, "Effective stress σ_xx in MPa")
+    ylabel!(c, "Effective stress σ_zz in MPa")
+    save_plot || file != "contour_lourenco.pdf" ? savefig(c,joinpath("figures",file)) : nothing
+    return c
+end
+
+function contour_lourenco!(p::Plots.Plot,samp::Sampling,xlims::Tuple{Number,Number},ylims::Tuple{Number,Number}; parameter_file="lourenco_parameters_optim.dat", save_plot=false, file="contour_lourenco.pdf")
+    parameters = JSON.parsefile(joinpath(samp.path,"model_data",parameter_file))
     x = xlims[1]:0.1:xlims[2]
     y = ylims[1]:0.1:ylims[2]
     n_x = length(x)
@@ -90,6 +108,22 @@ function contour_lourenco!(p::Plots.Plot,samp::Sampling,xlims::Tuple{Number,Numb
     for i in 1:n_y
         for j in 1:n_x
             τ[i,j] = τ_lourenco(x[j],y[i],Lourenco(parameters["f_tx"], parameters["f_tz"], parameters["f_mx"], parameters["f_mz"], parameters["f_α"], parameters["f_β"], parameters["f_γ"]))
+        end
+    end
+    save_plot || file != "contour_lourenco.pdf" ? savefig(c,joinpath("figures",file)) : nothing
+    contour!(p,x,y,τ,color=:heat)
+    return p
+end
+
+function contour_lourenco!(p::Plots.Plot,samp::Sampling,xlims::Tuple{Number,Number},ylims::Tuple{Number,Number}, l::Lourenco; save_plot=false, file="contour_lourenco.pdf")
+    x = xlims[1]:0.1:xlims[2]
+    y = ylims[1]:0.1:ylims[2]
+    n_x = length(x)
+    n_y = length(y)
+    τ = zeros(n_y,n_x)
+    for i in 1:n_y
+        for j in 1:n_x
+            τ[i,j] = τ_lourenco(x[j],y[i], l)
         end
     end
     save_plot || file != "contour_lourenco.pdf" ? savefig(c,joinpath("figures",file)) : nothing
