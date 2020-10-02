@@ -172,7 +172,7 @@ function optimize_lourenco(samp::Sampling, optimizer::Optim.AbstractOptimizer, u
 	f_tz = uniaxial_strengths["f_tz"]
 	f_mx = uniaxial_strengths["f_mx"]
 	f_mz = uniaxial_strengths["f_mz"]
-	f(x) = τ_sum(σ_x_models, σ_z_models, τ_models, Lourenco(f_tx, f_tz, f_mx, f_mz, x[5], x[6], x[7]))
+	f(x) = τ_sum(σ_x_models, σ_z_models, τ_models, Lourenco(f_tx, f_tz, f_mx, f_mz, x[1], x[2], x[3]))
 	res = optimize(f, start_values, optimizer)
 	results = Optim.minimizer(res)
 	τ_mean = mean(τ_models)
