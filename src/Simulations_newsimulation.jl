@@ -1,11 +1,19 @@
 # function for calculating strains
 function strains(stiffness_t,stiffness_c,stresses,factor)
 	stiffness = zeros(3,3)
-	for i in 1:3
-		if stresses[i] < 0
-			stiffness[i,i] = stiffness_c[i,i]
+	if prod(stresses) >= 0
+		if stresses[1] >= 0
+			stiffness = stiffness_t
 		else
-			stiffness[i,i] = stiffness_t[i,i]
+			stiffness = stiffness_c
+		end
+	else
+		for i in 1:3
+			if stresses[i] < 0
+				stiffness[i,i] = stiffness_c[i,i]
+			else
+				stiffness[i,i] = stiffness_t[i,i]
+			end
 		end
 	end
 	return stiffness\stresses * factor
