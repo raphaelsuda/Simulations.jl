@@ -89,13 +89,13 @@ function create_elastic_template(samp::Sampling)
 end
 
 # function for generating model
-function generate_elastic_model(temp_path,save_path,eps_xx,eps_zz,eps_xz)
+function generate_elastic_model(temp_path,save_path,eps_xx,eps_zz,eps_xz;ecc=String[])
     # load elastic input template as AbqModel
     inp = AbqModel(temp_path)
     # set unit cell to twodimensional periodicity
     setPBCdim!(inp,2)
     # set equation ecceptions for mortar layers
-    setEcceptions!(inp,["M1-1-1","M1-2-1","M1-3-1","M1-4-1","M1-5-1","M1-6-1","M2-1-1","M2-2-1","M2-3-1","M2-4-1","M2-5-1","M2-6-1"])
+    setEcceptions!(inp,ecc)
     # set the reference axis (normal vector of the free surface) to y
     setRefAxis!(inp,"y")
     # define node sets for pbc
@@ -164,7 +164,7 @@ function get_elastic_names(samp::Sampling)
 end
 
 
-function compute_stiffness(samp::Sampling; keep_types=[], t_cd=20)
+function compute_stiffness(samp::Sampling; keep_types=[], t_cd=20, ecc=String[])
     elas_path = create_elastic_template(samp)
     # initialize status dictionary for calculation of the loadcases
     calc_stat = Dict("eps33-t"=>false,"eps22-t"=>false,"eps23-t"=>false,"eps33-c"=>false,"eps22-c"=>false,"eps23-c"=>false)
@@ -178,7 +178,7 @@ function compute_stiffness(samp::Sampling; keep_types=[], t_cd=20)
         # create directory models if it doesn't exist
         isdir(dirname) ? nothing : mkdir(dirname)
         strains = elastic_simulations[simulation_name].eps_fin
-        generate_elastic_model(elas_path, simulation_path, strains[1], strains[2], strains[3])
+        generate_elastic_model(elas_path, simulation_path, strains[1], strains[2], strains[3], ecc=ecc)
         create_job(simulation_name, 4, simulation_folder="stiffness_simulations")
         @info "Starting evaluation of $(simulation_name)"
         # submit job file            
