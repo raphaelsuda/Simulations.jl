@@ -12,8 +12,8 @@ mutable struct Lourenco
 	end
 
 	function Lourenco(data_path::String)
-		data = readdlm(data_path)
-		return new(data[1], data[2], data[3], data[4], data[5], data[6], data[7])
+		data = JSON.parsefile(data_path)
+		return new(data["f_tx"], data["f_tz"], data["f_mx"], data["f_mz"], data["f_α"], data["f_β"], data["f_γ"])
 	end
 end
 
@@ -195,4 +195,18 @@ function optimize_lourenco(samp::Sampling, optimizer::Optim.AbstractOptimizer, u
 		JSON.print(f,lourenco_parameters_optim)
 	end
 	return nothing
+end
+
+function codet(samp::Sampling, lourenco_file::AbstractString)
+	df = CSV.read(joinpath(samp.path,"plot_failure_data.dat"))
+	σ_x_models = collect(df[!,:sig_xx_nonlin])
+	σ_z_models = collect(df[!,:sig_zz_nonlin])
+	τ_models = collect(df[!,:sig_xz_nonlin])
+	n_models = length(τ_models)
+	l = Lourenco(lourenco_file)
+	τ_mean = mean(τ_models)
+	SS_tot = sum((τ_models[i] - τ_mean)^2 for i in 1:n_models)
+	SS_res = τ_sum(σ_x_models, σ_z_models, τ_models, l)
+	CoD = 1 - SS_res/SS_tot
+	return CoD
 end
