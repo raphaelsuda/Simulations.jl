@@ -182,7 +182,7 @@ function find_simulation(samp::Sampling, id::Int64)
         end
     end
     @info "No Simulation with ID $(id) existing!"
-    return Nothing
+    return "" 
 end
 
 function write_model_data(sim::Simulation)
@@ -216,10 +216,6 @@ end
 
 function set_plot_status(samp::Sampling, id::Int64, plot_st::Bool)
     name = find_simulation(samp,id).name
-    if name == Nothing
-        @info "No simulation with ID $(id) existing!"
-        return Nothing
-    end
     set_plot_status(samp, name, plot_st)
     return plot_st
 end
@@ -481,15 +477,15 @@ end
 
 function stop_simulation(samp::Sampling, id::Int64)
     name = find_simulation(samp, id).name
-    if name == Nothing
-        @info "No simulation with ID $(id) existing!"
-        return Nothing
-    end
     stop_simulation(samp, name)
     return name
 end
 
 function rm_model(samp::Sampling, sim_name::String)
+    if sim_name ∉ keys(samp.simulations)
+        @warn "Simulation $(sim_name) not found in given Sampling!"
+        return nothing
+    end
     delete!(samp.simulations, sim_name)
     sim_path = joinpath(samp.path, "simulations", sim_name)
     for f in readdir(sim_path)
@@ -506,10 +502,6 @@ end
 
 function rm_model(samp::Sampling, id::Int64)
     name = find_simulation(samp, id).name
-    if name == Nothing
-        @info "No simulation with ID $(id) existing!"
-        return Nothing
-    end
     rm_model(samp, name)
     return Nothing
 end
