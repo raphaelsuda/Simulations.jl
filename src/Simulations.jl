@@ -297,7 +297,7 @@ function filter_simulations(samp::Sampling, plot_st::Bool)
     return simulations
 end
     
-function create_job(sim::Simulation, n_cpus::Int64, node="", time="48:00:00")
+function create_job(sim::Simulation, n_cpus::Int64; node="", time="48:00:00")
     legit_nodes = ["inode01", "inode02", "inode03"]
     if node in legit_nodes
         node = "@$(node)"
