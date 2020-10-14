@@ -14,19 +14,21 @@ using Plots
 
 import Base.show
 export Sampling,
-       initiate_sampling,
-       filter_simulations,
-       extract_reaction_forces,
-       compute_stresses,
-       run_simulation,
-       set_plot_status,
-       check_progress,
-       collect_failure_data,
-       scatter_sampling,
-       scatter_sampling!,
-       contour_lourenco,
-       contour_lourenco!,
-       optimize_lourenco
+        check_progress,
+        collect_failure_data,
+        compute_stresses,
+        contour_lourenco,
+        contour_lourenco!,
+        extract_reaction_forces,
+        filter_simulations,
+        initiate_sampling,
+        new_simulation,
+        optimize_lourenco,
+        rm_model,
+        run_simulation,
+        scatter_sampling,
+        scatter_sampling!,
+        set_plot_status
 
 include("Simulations_lists.jl")
 
@@ -298,7 +300,7 @@ function filter_simulations(samp::Sampling, plot_st::Bool)
     return simulations
 end
     
-function create_job(sim::Simulation, n_cpus::Int64, node="", time="48:00:00"))
+function create_job(sim::Simulation, n_cpus::Int64, node="", time="48:00:00")
     job_lines = ["#!/bin/bash",
                  "#\$ -cwd",
                  "#\$ -N $(sim.name)",
