@@ -419,7 +419,7 @@ function run_simulation(samp::Sampling, n::Int64; random=true, n_cpus=4, node=""
             delete!(rand_pool, new_sim)
         end
         for s in simulations_to_run
-            run_simulation(simulations[s]; n_cpus=n_cpus)
+            run_simulation(simulations[s]; n_cpus=n_cpus, node=node)
             samp.simulations[s].status = 2
         end
     end
