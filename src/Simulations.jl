@@ -3,6 +3,7 @@ module Simulations
 using AbaqusUnitCell
 using CSV
 using DataFrames
+using Dates
 using DelimitedFiles
 using Formatting
 using JSON
@@ -210,6 +211,15 @@ function set_plot_status(samp::Sampling, sim_names::Array{String,1}, plot_st::Bo
     return plot_st
 end
 
+function set_plot_status(samp::Sampling, id::Int64, plot_st::Bool)
+    name = find_simulation(samp,id).name
+    if name == Nothing
+        @info "No simulation with ID $(id) existing!"
+        return Nothing
+    end
+    set_plot_status(samp, name, plot_st)
+    return plot_st
+end
 
 function filter_simulations(simulations::Dict{String,Simulation}, st::Int)
     filtered_simulations = Dict{String,Simulation}()
@@ -288,14 +298,14 @@ function filter_simulations(samp::Sampling, plot_st::Bool)
     return simulations
 end
     
-function create_job(sim::Simulation, n_cpus::Int64)
+function create_job(sim::Simulation, n_cpus::Int64, node="", time="48:00:00"))
     job_lines = ["#!/bin/bash",
                  "#\$ -cwd",
                  "#\$ -N $(sim.name)",
                  "#\$ -V",
                  "#\$ -pe openmpi_fill $(n_cpus)",
-                 "#\$ -q nodes.q",
-                 "#\$ -l h_rt=48:00:00",
+                 "#\$ -q nodes.q$(node)",
+                 "#\$ -l h_rt=$(time)",
                  "#\$ -M raphael.suda@tuwien.ac.at",
                  "#\$ -m beas",
                  "",
@@ -310,14 +320,14 @@ function create_job(sim::Simulation, n_cpus::Int64)
     return nothing
 end
 
-function create_job(sim_name::String, n_cpus::Int64; simulation_folder="simulations")
+function create_job(sim_name::String, n_cpus::Int64; simulation_folder="simulations", node="", time="48:00:00")
     job_lines = ["#!/bin/bash",
                  "#\$ -cwd",
                  "#\$ -N $(sim_name)",
                  "#\$ -V",
                  "#\$ -pe openmpi_fill $(n_cpus)",
-                 "#\$ -q nodes.q",
-                 "#\$ -l h_rt=48:00:00",
+                 "#\$ -q nodes.q$(node)",
+                 "#\$ -l h_rt=$(time)",
                  "#\$ -M raphael.suda@tuwien.ac.at",
                  "#\$ -m beas",
                  "",
