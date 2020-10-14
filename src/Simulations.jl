@@ -28,7 +28,8 @@ export Sampling,
         run_simulation,
         scatter_sampling,
         scatter_sampling!,
-        set_plot_status
+        set_plot_status,
+        stop_simulation
 
 include("Simulations_lists.jl")
 
@@ -437,6 +438,29 @@ function rename_simulation(samp::Sampling, sim_name::String, new_name::String)
     mv(sim_name, new_name)
     cd(samp.path)
     return new_name
+end
+
+function stop_simulation(samp::Sampling, sim_name::String)
+    if sim_name in keys(samp.simulations)
+        if check_status(sim_name) == 2
+            run(`qdel sim_name`)
+        else
+            @info "Simulation $(sim_name) currently not running"
+        end
+    else
+        @warn "Simulation $(sim_name) not existing!"
+    end
+    return sim_name
+end
+
+function stop_simulation(samp::Sampling, id::Int64)
+    name = find_simulation(samp, id).name
+    if name == Nothing
+        @info "No simulation with ID $(id) existing!"
+        return Nothing
+    end
+    stop_simulation(samp, name)
+    return name
 end
 
 function rm_model(samp::Sampling, sim_name::String)
