@@ -171,6 +171,16 @@ function show(io::IO, samp::Sampling)
     print(io, "Sampling($(length(samp.simulations)) simulations)")
 end
 
+function find_simulation(samp::Sampling, id::Int64)
+    for sim in values(samp.simulations)
+        if sim.ID == id
+            return sim
+        end
+    end
+    @info "No Simulation with ID $(id) existing!"
+    return Nothing
+end
+
 function write_model_data(sim::Simulation)
     model_data = Dict("name" => sim.name,
                       "ID" => sim.ID,
