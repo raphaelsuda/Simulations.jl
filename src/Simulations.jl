@@ -107,7 +107,7 @@ end
 
 function initiate_sampling(path::AbstractString)
     cd(path)
-    @info "Initiating sampling project in $(pwd())"
+    @info "Initializing sampling project in $(pwd())"
     for f in folder_structure
         isdir(f) ? nothing : mkdir(f)
     end
