@@ -465,7 +465,7 @@ end
 function stop_simulation(samp::Sampling, sim_name::String)
     if sim_name in keys(samp.simulations)
         if check_status(sim_name) == 2
-            run(`qdel sim_name`)
+            run(`qdel $(sim_name)`)
         else
             @info "Simulation $(sim_name) currently not running"
         end
