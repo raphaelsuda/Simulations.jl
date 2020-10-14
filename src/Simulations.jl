@@ -302,6 +302,14 @@ function filter_simulations(samp::Sampling, plot_st::Bool)
 end
     
 function create_job(sim::Simulation, n_cpus::Int64, node="", time="48:00:00")
+    legit_nodes = ["inode01", "inode02", "inode03"]
+    if node in legit_nodes
+        node = "@$(node)"
+    elseif node == ""
+    else
+        @error "Given node $(node) not legit!"
+        return nothing
+    end
     job_lines = ["#!/bin/bash",
                  "#\$ -cwd",
                  "#\$ -N $(sim.name)",
@@ -324,6 +332,14 @@ function create_job(sim::Simulation, n_cpus::Int64, node="", time="48:00:00")
 end
 
 function create_job(sim_name::String, n_cpus::Int64; simulation_folder="simulations", node="", time="48:00:00")
+    legit_nodes = ["inode01", "inode02", "inode03"]
+    if node in legit_nodes
+        node = "@$(node)"
+    elseif node == ""
+    else
+        @error "Given node $(node) not legit!"
+        return nothing
+    end
     job_lines = ["#!/bin/bash",
                  "#\$ -cwd",
                  "#\$ -N $(sim_name)",
@@ -377,8 +393,13 @@ function collect_failure_data(samp::Sampling)
     return plot_df
 end
 
-function run_simulation(sim::Simulation; n_cpus=4)
-    create_job(sim, n_cpus)
+function run_simulation(sim::Simulation; n_cpus=4, node="")
+    legit_nodes = ["", "inode01", "inode02", "inode03"]
+    if node ∉ legit_nodes
+        @error "Given node $(node) not legit!"
+        return nothing
+    end
+    create_job(sim, n_cpus; node=node)
     cd(joinpath("simulations",sim.name))
     run(`qsub job.sh`)
     cd("..")
@@ -386,7 +407,12 @@ function run_simulation(sim::Simulation; n_cpus=4)
     return nothing
 end
 
-function run_simulation(samp::Sampling, n::Int64; random=true, n_cpus=4)
+function run_simulation(samp::Sampling, n::Int64; random=true, n_cpus=4, node="")
+    legit_nodes = ["", "inode01", "inode02", "inode03"]
+    if node ∉ legit_nodes
+        @error "Given node $(node) not legit!"
+        return nothing
+    end
     simulations = filter_simulations(samp, 1)
     rand_pool = filter_simulations(samp, 1)
     if random
