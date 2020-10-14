@@ -452,6 +452,16 @@ function rm_model(samp::Sampling, sim_name::String)
     return nothing
 end
 
+function rm_model(samp::Sampling, id::Int64)
+    name = find_simulation(samp, id).name
+    if name == Nothing
+        @info "No simulation with ID $(id) existing!"
+        return Nothing
+    end
+    rm_model(samp, name)
+    return Nothing
+end
+
 include("Simulations_newsimulation.jl")
 include("Simulations_stiffness.jl")
 include("Simulations_lourenco.jl")
