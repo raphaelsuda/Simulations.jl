@@ -157,7 +157,7 @@ function get_elastic_names(samp::Sampling)
     elastic_simulations = Dict{String,Simulation}()
     for lc in elastic_loadcases
         simulation_names[lc] = "$(samp.name_template)-Elastic-$(elastic_filenames[lc])"
-        strains = eff_strains_homo[lc] .* 0.01
+        strains = eff_strains_homo[lc] .* 0.0001
         elastic_simulations[simulation_names[lc]] = Simulation(1, simulation_names[lc], 999, 0.0, 0.0, strains, false, (0.0, 0.0, 0.0), 0, (0.0, 0.0, 0.0), 0)
     end
     return simulation_names, elastic_simulations
