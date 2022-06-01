@@ -132,7 +132,7 @@ function τ_sum(σ_x::Array{Float64}, σ_z::Array{Float64}, τ::Array{Float64}, 
 end
 
 function optimize_lourenco(samp::Sampling, optimizer::Optim.AbstractOptimizer; start_values=[0.0,0.0,0.0,0.0,0.0,0.0,0.0], file_name="lourenco_parameters_optim.dat")
-	df = CSV.read(joinpath(samp.path,"plot_failure_data.dat"))
+	df = CSV.read(joinpath(samp.path,"plot_failure_data.dat"), DataFrame)
 	σ_x_models = collect(df[!,:sig_xx_nonlin])
 	σ_z_models = collect(df[!,:sig_zz_nonlin])
 	τ_models = collect(df[!,:sig_xz_nonlin])
@@ -163,7 +163,7 @@ function optimize_lourenco(samp::Sampling, optimizer::Optim.AbstractOptimizer; s
 end
 
 function optimize_lourenco(samp::Sampling, optimizer::Optim.AbstractOptimizer, uniaxial_strengths::Dict{String,Number}; start_values=[0.0,0.0,0.0], file_name="lourenco_parameters_optim.dat")
-	df = CSV.read(joinpath(samp.path,"plot_failure_data.dat"))
+	df = CSV.read(joinpath(samp.path,"plot_failure_data.dat"), DataFrame)
 	σ_x_models = collect(df[!,:sig_xx_nonlin])
 	σ_z_models = collect(df[!,:sig_zz_nonlin])
 	τ_models = collect(df[!,:sig_xz_nonlin])
@@ -198,7 +198,7 @@ function optimize_lourenco(samp::Sampling, optimizer::Optim.AbstractOptimizer, u
 end
 
 function codet(samp::Sampling, lourenco_file::AbstractString)
-	df = CSV.read(joinpath(samp.path,"plot_failure_data.dat"))
+	df = CSV.read(joinpath(samp.path,"plot_failure_data.dat"), DataFrame)
 	σ_x_models = collect(df[!,:sig_xx_nonlin])
 	σ_z_models = collect(df[!,:sig_zz_nonlin])
 	τ_models = collect(df[!,:sig_xz_nonlin])
