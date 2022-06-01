@@ -9,7 +9,7 @@ function convert_model_data(df::DataFrame)
 end
 
 function convert_model_data(path::AbstractString)
-    df = CSV.read(path)
+    df = CSV.read(path, DataFrame)
     convert_model_data(df)
     return nothing
 end
