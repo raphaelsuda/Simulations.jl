@@ -1,5 +1,5 @@
 function scatter_sampling(samp::Sampling; show_text=true, show_linear=true, title="", xlims=:none, ylims=:none, save_plot=false, file="scatter_sampling.pdf") 
-    plot_simulations_data = CSV.read("plot_failure_data.dat")
+    plot_simulations_data = CSV.read("plot_failure_data.dat", DataFrame)
     n_simulations = nrow(plot_simulations_data)
     p = plot(legend = :bottomleft, title=title, xlims=xlims, ylims=ylims)
     xlabel!(p, "Effective stress σ_xx in MPa")
@@ -25,7 +25,7 @@ function scatter_sampling(samp::Sampling; show_text=true, show_linear=true, titl
 end
 
 function scatter_sampling!(p::Plots.Plot,samp::Sampling; show_text=true, show_linear=true, title="", xlims=:none, ylims=:none) 
-    plot_simulations_data = CSV.read("plot_failure_data.dat")
+    plot_simulations_data = CSV.read("plot_failure_data.dat", DataFrame)
     n_simulations = nrow(plot_simulations_data)
     if show_linear
         for i in 1:n_simulations
